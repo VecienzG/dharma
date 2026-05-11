@@ -4,8 +4,10 @@ import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain
 import { type EmailingDomainDriverInterface } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
+import { AwsSesBootstrapService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-bootstrap.service';
 import { AwsSesDriver } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-driver.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
+import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
@@ -19,6 +21,8 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     configGroupHashService: ConfigGroupHashService,
     private readonly awsSesClientProvider: AwsSesClientProvider,
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
+    private readonly awsSesBootstrapService: AwsSesBootstrapService,
+    private readonly awsSesSendEmailService: AwsSesSendEmailService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -67,6 +71,8 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
           awsConfig,
           this.awsSesClientProvider,
           this.awsSesHandleErrorService,
+          this.awsSesBootstrapService,
+          this.awsSesSendEmailService,
         );
       }
 

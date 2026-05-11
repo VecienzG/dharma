@@ -12,6 +12,7 @@ import { type Request } from 'express';
 import type SnsPayloadValidator from 'sns-payload-validator';
 
 import { MessagingWebhookDispatcherService } from 'src/engine/core-modules/messaging-webhooks/services/messaging-webhook-dispatcher.service';
+import { SesEventHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-event-handler.service';
 import { SnsSignatureVerifierService } from 'src/engine/core-modules/messaging-webhooks/services/sns-signature-verifier.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -23,6 +24,7 @@ export class MessagingWebhooksController {
   constructor(
     private readonly snsSignatureVerifierService: SnsSignatureVerifierService,
     private readonly messagingWebhookDispatcherService: MessagingWebhookDispatcherService,
+    private readonly sesEventHandlerService: SesEventHandlerService,
   ) {}
 
   @Post(['webhooks/messaging/ses'])
@@ -54,6 +56,36 @@ export class MessagingWebhooksController {
       await this.messagingWebhookDispatcherService.dispatchSnsNotification(
         payload,
       );
+    }
+  }
+
+  @Post(['webhooks/messaging/ses-events'])
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @HttpCode(200)
+  async handleSesEventsWebhook(
+    @Req() request: RawBodyRequest<Request>,
+  ): Promise<void> {
+    if (!request.rawBody) {
+      throw new BadRequestException('Missing SNS payload');
+    }
+
+    const payload = this.parseSnsPayload(request.rawBody);
+
+    await this.snsSignatureVerifierService.assertAllowedAndSigned(payload);
+
+    if (
+      payload.Type === 'SubscriptionConfirmation' ||
+      payload.Type === 'UnsubscribeConfirmation'
+    ) {
+      await this.messagingWebhookDispatcherService.confirmSnsSubscription(
+        payload.SubscribeURL,
+      );
+
+      return;
+    }
+
+    if (payload.Type === 'Notification') {
+      await this.sesEventHandlerService.dispatch(payload);
     }
   }
 

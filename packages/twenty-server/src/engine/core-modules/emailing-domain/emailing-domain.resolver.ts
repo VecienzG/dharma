@@ -6,6 +6,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
+import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
+import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -60,6 +62,29 @@ export class EmailingDomainResolver {
       );
 
     return emailingDomain;
+  }
+
+  @Mutation(() => SendEmailViaDomainOutputDTO)
+  async sendEmailViaEmailingDomain(
+    @Args('input') input: SendEmailViaDomainInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+  ): Promise<SendEmailViaDomainOutputDTO> {
+    const result = await this.emailingDomainService.sendEmail(
+      currentWorkspace,
+      input.emailingDomainId,
+      {
+        to: input.to,
+        cc: input.cc,
+        bcc: input.bcc,
+        subject: input.subject,
+        text: input.text,
+        html: input.html,
+        from: input.from,
+        replyTo: input.replyTo,
+      },
+    );
+
+    return { messageId: result.messageId };
   }
 
   @Query(() => [EmailingDomainDTO])

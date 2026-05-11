@@ -10,14 +10,22 @@ import {
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import {
+  type DomainBootstrapInput,
   type DomainStatusInput,
   type DomainVerificationInput,
   type EmailingDomainDriverInterface,
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
+import {
+  type EmailingDomainSendEmailInput,
+  type EmailingDomainSendEmailResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 
+import { AWS_SES_RESOURCE_NAME_PREFIX } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-resource-name-prefix.constant';
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
+import { AwsSesBootstrapService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-bootstrap.service';
 import { type AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
+import { type AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { type VerificationRecordDTO } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
 
@@ -28,6 +36,8 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     private readonly config: AwsSesDriverConfig,
     private readonly awsSesClientProvider: AwsSesClientProvider,
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
+    private readonly awsSesBootstrapService: AwsSesBootstrapService,
+    private readonly awsSesSendEmailService: AwsSesSendEmailService,
   ) {}
 
   async verifyDomain(
@@ -36,7 +46,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     try {
       this.logger.log(`Starting domain verification for: ${input.domain}`);
 
-      const tenantName = this.generateTenantName(input.workspaceId);
+      const tenantName = this.buildTenantName(input.workspaceId);
 
       await this.ensureTenantExists(tenantName);
 
@@ -102,8 +112,38 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
   }
 
-  private generateTenantName(workspaceId: string): string {
-    return `twenty-workspace-${workspaceId}`;
+  async bootstrap(input: DomainBootstrapInput): Promise<void> {
+    await this.awsSesBootstrapService.bootstrap(
+      {
+        domain: input.domain,
+        tenantName: this.buildTenantName(input.workspaceId),
+        configurationSetName: this.buildConfigurationSetName(input.workspaceId),
+        contactListName: this.buildContactListName(input.workspaceId),
+      },
+      this.config,
+    );
+  }
+
+  async sendEmail(
+    input: EmailingDomainSendEmailInput,
+  ): Promise<EmailingDomainSendEmailResult> {
+    return this.awsSesSendEmailService.sendEmail(input, {
+      tenantName: this.buildTenantName(input.workspaceId),
+      configurationSetName: this.buildConfigurationSetName(input.workspaceId),
+      contactListName: this.buildContactListName(input.workspaceId),
+    });
+  }
+
+  private buildTenantName(workspaceId: string): string {
+    return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
+  }
+
+  private buildConfigurationSetName(workspaceId: string): string {
+    return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
+  }
+
+  private buildContactListName(workspaceId: string): string {
+    return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
   }
 
   private async ensureTenantExists(tenantName: string): Promise<void> {

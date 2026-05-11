@@ -1,3 +1,7 @@
+import {
+  type EmailingDomainSendEmailInput,
+  type EmailingDomainSendEmailResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { type EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 
@@ -7,6 +11,11 @@ export type DomainVerificationInput = {
 };
 
 export type DomainStatusInput = {
+  domain: string;
+  workspaceId: string;
+};
+
+export type DomainBootstrapInput = {
   domain: string;
   workspaceId: string;
 };
@@ -24,4 +33,8 @@ export interface EmailingDomainDriverInterface {
   getDomainStatus(
     input: DomainStatusInput,
   ): Promise<EmailingDomainVerificationResult>;
+  bootstrap(input: DomainBootstrapInput): Promise<void>;
+  sendEmail(
+    input: EmailingDomainSendEmailInput,
+  ): Promise<EmailingDomainSendEmailResult>;
 }

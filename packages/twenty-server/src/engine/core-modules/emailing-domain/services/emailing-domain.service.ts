@@ -1,18 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import {
   EmailingDomainDriver,
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
+import {
+  type EmailingDomainSendEmailInput,
+  type EmailingDomainSendEmailResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+export type SendEmailViaDomainInput = {
+  to: string[];
+  cc?: string[];
+  bcc?: string[];
+  subject: string;
+  text: string;
+  html?: string;
+  from?: string;
+  replyTo?: string[];
+};
+
 @Injectable()
 export class EmailingDomainService {
+  private readonly logger = new Logger(EmailingDomainService.name);
+
   constructor(
     @InjectRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
@@ -38,6 +59,8 @@ export class EmailingDomainService {
       domain,
       workspaceId: workspace.id,
     });
+
+    await this.tryBootstrap(driverInstance, domain, workspace.id);
 
     const domainToCreate = {
       domain,
@@ -116,6 +139,14 @@ export class EmailingDomainService {
       workspaceId: emailingDomain.workspaceId,
     });
 
+    if (verificationResult.status === EmailingDomainStatus.VERIFIED) {
+      await this.tryBootstrap(
+        driver,
+        emailingDomain.domain,
+        emailingDomain.workspaceId,
+      );
+    }
+
     const updatedDomain = await this.emailingDomainRepository.save({
       ...emailingDomain,
       ...verificationResult,
@@ -170,6 +201,61 @@ export class EmailingDomainService {
       );
 
       throw error;
+    }
+  }
+
+  async sendEmail(
+    workspace: WorkspaceEntity,
+    emailingDomainId: string,
+    input: SendEmailViaDomainInput,
+  ): Promise<EmailingDomainSendEmailResult> {
+    const emailingDomain = await this.getEmailingDomain(
+      workspace,
+      emailingDomainId,
+    );
+
+    if (!emailingDomain) {
+      throw new EmailingDomainDriverException(
+        'Emailing domain not found',
+        EmailingDomainDriverExceptionCode.NOT_FOUND,
+      );
+    }
+
+    if (emailingDomain.status !== EmailingDomainStatus.VERIFIED) {
+      throw new EmailingDomainDriverException(
+        `Emailing domain is not verified (status: ${emailingDomain.status})`,
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    const driver = this.emailingDomainDriverFactory.getCurrentDriver();
+    const driverInput: EmailingDomainSendEmailInput = {
+      workspaceId: workspace.id,
+      domain: emailingDomain.domain,
+      from: input.from ?? `noreply@${emailingDomain.domain}`,
+      to: input.to,
+      cc: input.cc,
+      bcc: input.bcc,
+      subject: input.subject,
+      text: input.text,
+      html: input.html,
+      replyTo: input.replyTo,
+    };
+
+    return driver.sendEmail(driverInput);
+  }
+
+  private async tryBootstrap(
+    driver: ReturnType<EmailingDomainDriverFactory['getCurrentDriver']>,
+    domain: string,
+    workspaceId: string,
+  ): Promise<void> {
+    try {
+      await driver.bootstrap({ domain, workspaceId });
+    } catch (error) {
+      this.logger.warn(
+        `Bootstrap for ${domain} (workspace ${workspaceId}) failed; user can retry via verify: ${error}`,
+      );
     }
   }
 }

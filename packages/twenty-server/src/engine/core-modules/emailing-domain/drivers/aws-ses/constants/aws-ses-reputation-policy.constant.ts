@@ -1,0 +1,2 @@
+export const AWS_SES_REPUTATION_POLICY: 'STANDARD' | 'STRICT' | 'NONE' =
+  'STANDARD';
