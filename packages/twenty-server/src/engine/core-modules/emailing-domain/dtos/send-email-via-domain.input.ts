@@ -1,7 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+
 @InputType()
-export class SendEmailViaDomainInput {
+export class SendEmailViaDomainInput implements EmailingDomainEmailContent {
   @Field(() => String)
   emailingDomainId: string;
 

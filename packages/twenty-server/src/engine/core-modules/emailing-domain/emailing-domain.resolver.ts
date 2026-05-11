@@ -69,19 +69,11 @@ export class EmailingDomainResolver {
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendEmailViaDomainOutputDTO> {
+    const { emailingDomainId, ...content } = input;
     const result = await this.emailingDomainService.sendEmail(
       currentWorkspace,
-      input.emailingDomainId,
-      {
-        to: input.to,
-        cc: input.cc,
-        bcc: input.bcc,
-        subject: input.subject,
-        text: input.text,
-        html: input.html,
-        from: input.from,
-        replyTo: input.replyTo,
-      },
+      emailingDomainId,
+      content,
     );
 
     return { messageId: result.messageId };

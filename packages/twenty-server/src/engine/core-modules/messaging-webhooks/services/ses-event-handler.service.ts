@@ -32,12 +32,12 @@ export class SesEventHandlerService {
     }
 
     if (this.isEventBridgeShape(message)) {
-      this.handleEventBridge(message);
+      this.logEventBridge(message);
 
       return;
     }
 
-    this.handleConfigSetNotification(message as SesConfigSetNotification);
+    this.logConfigSetNotification(message as SesConfigSetNotification);
   }
 
   private parseMessage(
@@ -58,65 +58,23 @@ export class SesEventHandlerService {
     );
   }
 
-  private handleEventBridge(payload: SesEventBridgePayload): void {
+  private logEventBridge(payload: SesEventBridgePayload): void {
     const workspaceId = this.extractWorkspaceIdFromResources(payload.resources);
-    const detailType = payload['detail-type'];
 
-    if (detailType === 'Sending Status Disabled') {
-      this.logger.warn(
-        `SES tenant sending paused for workspace ${workspaceId ?? '?'} (resources=${payload.resources?.join(',')})`,
-      );
-
-      return;
-    }
-
-    if (detailType === 'Sending Status Enabled') {
-      this.logger.log(
-        `SES tenant sending re-enabled for workspace ${workspaceId ?? '?'}`,
-      );
-
-      return;
-    }
-
-    if (
-      detailType === 'Advisor Recommendation Status Open' ||
-      detailType === 'Advisor Recommendation Status Closed'
-    ) {
-      this.logger.log(
-        `SES reputation finding ${detailType} for workspace ${workspaceId ?? '?'}: ${JSON.stringify(payload.detail ?? {})}`,
-      );
-
-      return;
-    }
-
-    this.logger.log(`Unhandled SES EventBridge detail-type: ${detailType}`);
+    this.logger.log(
+      `SES EventBridge event detail-type='${payload['detail-type']}' workspace=${workspaceId ?? '?'} resources=${payload.resources?.join(',') ?? ''} detail=${JSON.stringify(payload.detail ?? {})}`,
+    );
   }
 
-  private handleConfigSetNotification(
+  private logConfigSetNotification(
     notification: SesConfigSetNotification,
   ): void {
     const eventType = notification.eventType ?? notification.notificationType;
     const workspaceId = notification.mail?.tags?.workspace?.[0];
     const messageId = notification.mail?.messageId;
 
-    if (eventType === 'Bounce') {
-      this.logger.warn(
-        `SES Bounce (${notification.bounce?.bounceType}/${notification.bounce?.bounceSubType}) for workspace ${workspaceId ?? '?'} message ${messageId ?? '?'}`,
-      );
-
-      return;
-    }
-
-    if (eventType === 'Complaint') {
-      this.logger.warn(
-        `SES Complaint (${notification.complaint?.complaintFeedbackType}) for workspace ${workspaceId ?? '?'} message ${messageId ?? '?'}`,
-      );
-
-      return;
-    }
-
     this.logger.log(
-      `SES config-set notification ${eventType} for workspace ${workspaceId ?? '?'} message ${messageId ?? '?'}`,
+      `SES config-set notification eventType='${eventType}' workspace=${workspaceId ?? '?'} message=${messageId ?? '?'} bounce=${JSON.stringify(notification.bounce ?? {})} complaint=${JSON.stringify(notification.complaint ?? {})}`,
     );
   }
 

@@ -13,22 +13,12 @@ import {
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import {
+  type EmailingDomainEmailContent,
   type EmailingDomainSendEmailInput,
   type EmailingDomainSendEmailResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
-export type SendEmailViaDomainInput = {
-  to: string[];
-  cc?: string[];
-  bcc?: string[];
-  subject: string;
-  text: string;
-  html?: string;
-  from?: string;
-  replyTo?: string[];
-};
 
 @Injectable()
 export class EmailingDomainService {
@@ -207,7 +197,7 @@ export class EmailingDomainService {
   async sendEmail(
     workspace: WorkspaceEntity,
     emailingDomainId: string,
-    input: SendEmailViaDomainInput,
+    input: EmailingDomainEmailContent,
   ): Promise<EmailingDomainSendEmailResult> {
     const emailingDomain = await this.getEmailingDomain(
       workspace,
