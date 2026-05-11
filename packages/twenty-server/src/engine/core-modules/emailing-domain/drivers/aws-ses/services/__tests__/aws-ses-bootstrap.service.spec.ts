@@ -9,14 +9,13 @@ import {
 
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesBootstrapService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-bootstrap.service';
-import { type AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 
-const buildAlreadyExistsError = (): Error => {
-  const error = new Error('Already exists');
+const buildError = (name: string, message = ''): Error => {
+  const error = new Error(message);
 
-  (error as Error & { name: string }).name = 'AlreadyExistsException';
+  (error as Error & { name: string }).name = name;
 
   return error;
 };
@@ -40,17 +39,9 @@ describe('AwsSesBootstrapService', () => {
     const clientProvider = {
       getSESClient: () => ({ send }),
     } as unknown as AwsSesClientProvider;
-    const handleErrorService = {
-      handleAwsSesError: jest.fn((error) => {
-        throw error;
-      }),
-    } as unknown as AwsSesHandleErrorService;
-    const service = new AwsSesBootstrapService(
-      clientProvider,
-      handleErrorService,
-    );
+    const service = new AwsSesBootstrapService(clientProvider);
 
-    return { service, send, handleErrorService };
+    return { service, send };
   };
 
   describe('when bootstrap is called for a fresh tenant', () => {
@@ -115,8 +106,8 @@ describe('AwsSesBootstrapService', () => {
     });
   });
 
-  describe('when bootstrap is called on a tenant that already has resources', () => {
-    it('should swallow AlreadyExistsException for idempotent creates', async () => {
+  describe('idempotency', () => {
+    it('should swallow AlreadyExistsException on create operations', async () => {
       const { service, send } = setUp();
 
       send.mockImplementation(async (command) => {
@@ -125,7 +116,7 @@ describe('AwsSesBootstrapService', () => {
           command instanceof CreateConfigurationSetEventDestinationCommand ||
           command instanceof CreateContactListCommand
         ) {
-          throw buildAlreadyExistsError();
+          throw buildError('AlreadyExistsException');
         }
 
         return {};
@@ -134,11 +125,37 @@ describe('AwsSesBootstrapService', () => {
       await expect(service.bootstrap(input, config)).resolves.toBeUndefined();
     });
 
-    it('should propagate non-idempotent AWS errors via handle-error service', async () => {
-      const { service, send, handleErrorService } = setUp();
-      const fatalError = Object.assign(new Error('Boom'), {
-        name: 'AccessDeniedException',
+    it('should swallow missing-reputation-entity errors and continue', async () => {
+      const { service, send } = setUp();
+
+      send.mockImplementation(async (command) => {
+        if (command instanceof UpdateReputationEntityPolicyCommand) {
+          throw buildError(
+            'BadRequestException',
+            `ReputationEntity <arn:aws:ses:us-east-1:123456789012:tenant/twenty-workspace-ws1> does not exist`,
+          );
+        }
+
+        return {};
       });
+
+      await service.bootstrap(input, config);
+
+      // Bootstrap continues to MAIL FROM after swallowing the missing
+      // reputation entity error.
+      const mailFromCall = send.mock.calls.find(
+        ([command]) =>
+          command instanceof PutEmailIdentityMailFromAttributesCommand,
+      );
+
+      expect(mailFromCall).toBeDefined();
+    });
+  });
+
+  describe('propagation', () => {
+    it('should propagate non-idempotent AWS errors to the caller', async () => {
+      const { service, send } = setUp();
+      const fatalError = buildError('AccessDeniedException', 'Boom');
 
       send.mockImplementation(async (command) => {
         if (command instanceof CreateConfigurationSetCommand) {
@@ -149,10 +166,6 @@ describe('AwsSesBootstrapService', () => {
       });
 
       await expect(service.bootstrap(input, config)).rejects.toBe(fatalError);
-      expect(handleErrorService.handleAwsSesError).toHaveBeenCalledWith(
-        fatalError,
-        'bootstrap',
-      );
     });
   });
 });

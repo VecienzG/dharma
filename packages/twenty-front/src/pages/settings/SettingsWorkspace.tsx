@@ -5,6 +5,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
+import { SettingsWorkspaceEmailingDomainsSection } from '@/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -29,6 +30,10 @@ export const SettingsWorkspace = () => {
   );
   const showEmailGroupSection =
     isEmailGroupEnabled && isEmailGroupFeatureEnabled;
+
+  const showEmailingDomainsSection = useIsFeatureEnabled(
+    FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -60,6 +65,9 @@ export const SettingsWorkspace = () => {
           </Section>
         )}
         {showEmailGroupSection && <SettingsWorkspaceEmailGroupSection />}
+        {showEmailingDomainsSection && (
+          <SettingsWorkspaceEmailingDomainsSection />
+        )}
         <Section>
           <DeleteWorkspace />
         </Section>

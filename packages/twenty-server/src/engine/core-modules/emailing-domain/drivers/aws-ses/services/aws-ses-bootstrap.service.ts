@@ -17,7 +17,6 @@ import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-do
 import { AWS_SES_REPUTATION_POLICY } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-reputation-policy.constant';
 import { AWS_SES_TRANSACTIONAL_TOPIC_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-transactional-topic-name.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
-import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 
 export type BootstrapInput = {
   domain: string;
@@ -35,28 +34,18 @@ const REPUTATION_POLICY_ARN_BY_KEY: Record<'STANDARD' | 'STRICT', string> = {
 export class AwsSesBootstrapService {
   private readonly logger = new Logger(AwsSesBootstrapService.name);
 
-  constructor(
-    private readonly awsSesClientProvider: AwsSesClientProvider,
-    private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
-  ) {}
+  constructor(private readonly awsSesClientProvider: AwsSesClientProvider) {}
 
   async bootstrap(
     input: BootstrapInput,
     config: AwsSesDriverConfig,
   ): Promise<void> {
-    try {
-      await this.ensureAccountSuppressionEnabled();
-      await this.ensureConfigurationSet(input.configurationSetName);
-      await this.ensureEventDestination(input.configurationSetName, config);
-      await this.ensureContactList(input.contactListName);
-      await this.attachReputationPolicy(input.tenantName, config);
-      await this.configureCustomMailFrom(input.domain);
-    } catch (error) {
-      this.logger.error(
-        `Failed to bootstrap tenant ${input.tenantName}: ${error}`,
-      );
-      this.awsSesHandleErrorService.handleAwsSesError(error, 'bootstrap');
-    }
+    await this.ensureAccountSuppressionEnabled();
+    await this.ensureConfigurationSet(input.configurationSetName);
+    await this.ensureEventDestination(input.configurationSetName, config);
+    await this.ensureContactList(input.contactListName);
+    await this.attachReputationPolicy(input.tenantName, config);
+    await this.configureCustomMailFrom(input.domain);
   }
 
   private async ensureAccountSuppressionEnabled(): Promise<void> {
@@ -167,16 +156,31 @@ export class AwsSesBootstrapService {
       AWS_SES_REPUTATION_POLICY
     ].replace('%REGION%', config.region);
 
-    await sesClient.send(
-      new UpdateReputationEntityPolicyCommand({
-        ReputationEntityType: 'RESOURCE',
-        ReputationEntityReference: tenantArn,
-        ReputationEntityPolicy: policyArn,
-      }),
-    );
-    this.logger.log(
-      `Attached ${AWS_SES_REPUTATION_POLICY} reputation policy to ${tenantArn}`,
-    );
+    try {
+      await sesClient.send(
+        new UpdateReputationEntityPolicyCommand({
+          ReputationEntityType: 'RESOURCE',
+          ReputationEntityReference: tenantArn,
+          ReputationEntityPolicy: policyArn,
+        }),
+      );
+      this.logger.log(
+        `Attached ${AWS_SES_REPUTATION_POLICY} reputation policy to ${tenantArn}`,
+      );
+    } catch (error) {
+      // SES provisions the reputation entity for a tenant lazily — for new
+      // tenants and tenants created before tenant-isolation launched it
+      // does not exist until first sending activity. Next bootstrap run
+      // will pick it up.
+      if (this.isMissingReputationEntityError(error)) {
+        this.logger.warn(
+          `Reputation entity not yet provisioned for ${tenantArn}; policy will be attached on next bootstrap run.`,
+        );
+
+        return;
+      }
+      throw error;
+    }
   }
 
   private async configureCustomMailFrom(domain: string): Promise<void> {
@@ -195,6 +199,20 @@ export class AwsSesBootstrapService {
     );
     this.logger.log(
       `Configured custom MAIL FROM ${AWS_SES_MAIL_FROM_SUBDOMAIN}.${domain} for ${domain}`,
+    );
+  }
+
+  private isMissingReputationEntityError(error: {
+    name?: string;
+    message?: string;
+  }): boolean {
+    if (error?.name === 'NotFoundException') {
+      return true;
+    }
+
+    return (
+      error?.name === 'BadRequestException' &&
+      error?.message?.includes('does not exist') === true
     );
   }
 }

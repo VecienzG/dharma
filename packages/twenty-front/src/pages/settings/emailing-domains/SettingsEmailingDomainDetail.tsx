@@ -48,7 +48,7 @@ export const SettingsEmailingDomainDetail = () => {
         },
         {
           children: <Trans>Emailing Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Applications),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: emailingDomain.domain },
       ]}

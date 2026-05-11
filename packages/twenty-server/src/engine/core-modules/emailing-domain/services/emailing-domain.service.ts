@@ -119,10 +119,10 @@ export class EmailingDomainService {
       throw new Error('Emailing domain not found');
     }
 
-    if (emailingDomain.status === EmailingDomainStatus.VERIFIED) {
-      throw new Error('Emailing domain is already verified');
-    }
-
+    // verifyDomain is idempotent against SES; re-running on an already-
+    // verified domain refreshes status (catches DKIM revocation) and
+    // re-attempts bootstrap so legacy tenants without a reputation entity
+    // pick up the policy once SES has provisioned it.
     const driver = this.emailingDomainDriverFactory.getCurrentDriver();
     const verificationResult = await driver.verifyDomain({
       domain: emailingDomain.domain,
