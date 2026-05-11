@@ -27,9 +27,13 @@ export const SettingsWorkspaceEmailingDomainsSection = () => {
       items={emailingDomains}
       columns={[
         { label: t`Domain`, Cell: SettingsEmailingDomainNameCell },
-        { label: t`Status`, Cell: SettingsEmailingDomainStatusCell },
+        {
+          label: t`Status`,
+          align: 'right',
+          Cell: SettingsEmailingDomainStatusCell,
+        },
       ]}
-      gridAutoColumns="1fr auto"
+      gridAutoColumns="1fr 1fr"
       onRowClick={(emailingDomain) =>
         navigateSettings(SettingsPath.EmailingDomainDetail, {
           domainId: emailingDomain.id,
