@@ -2056,6 +2056,11 @@ export type EmailingDomainDriver = 'AWS_SES'
 
 export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
 
+export interface SendEmailViaDomainOutput {
+    messageId: Scalars['String']
+    __typename: 'SendEmailViaDomainOutput'
+}
+
 export interface AutocompleteResult {
     text: Scalars['String']
     placeId: Scalars['String']
@@ -2600,6 +2605,7 @@ export interface Query {
     indexMetadatas: IndexConnection
     findManyAgents: Agent[]
     findOneAgent: Agent
+    getEmailingDomains: EmailingDomain[]
     getRoles: Role[]
     getToolIndex: ToolIndexEntry[]
     getToolInputSchema?: Scalars['JSON']
@@ -2652,7 +2658,6 @@ export interface Query {
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
-    getEmailingDomains: EmailingDomain[]
     findManyMarketplaceApps: MarketplaceApp[]
     findMarketplaceAppDetail: MarketplaceAppDetail
     __typename: 'Query'
@@ -2760,6 +2765,10 @@ export interface Mutation {
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
+    createEmailingDomain: EmailingDomain
+    deleteEmailingDomain: Scalars['Boolean']
+    verifyEmailingDomain: EmailingDomain
+    sendEmailViaEmailingDomain: SendEmailViaDomainOutput
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
     updateOneRole: Role
@@ -2861,9 +2870,6 @@ export interface Mutation {
     updatePublicDomain: PublicDomain
     deletePublicDomain: Scalars['Boolean']
     checkPublicDomainValidRecords?: DomainValidRecords
-    createEmailingDomain: EmailingDomain
-    deleteEmailingDomain: Scalars['Boolean']
-    verifyEmailingDomain: EmailingDomain
     createOneAppToken: AppToken
     installMarketplaceApp: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
@@ -5067,6 +5073,12 @@ export interface EmailingDomainGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SendEmailViaDomainOutputGenqlSelection{
+    messageId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AutocompleteResultGenqlSelection{
     text?: boolean | number
     placeId?: boolean | number
@@ -5643,6 +5655,7 @@ export interface QueryGenqlSelection{
     filter: IndexFilter} })
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    getEmailingDomains?: EmailingDomainGenqlSelection
     getRoles?: RoleGenqlSelection
     getToolIndex?: ToolIndexEntryGenqlSelection
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
@@ -5701,7 +5714,6 @@ export interface QueryGenqlSelection{
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
-    getEmailingDomains?: EmailingDomainGenqlSelection
     findManyMarketplaceApps?: MarketplaceAppGenqlSelection
     findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     __typename?: boolean | number
@@ -5830,6 +5842,10 @@ export interface MutationGenqlSelection{
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {domain: Scalars['String'], driver: EmailingDomainDriver} })
+    deleteEmailingDomain?: { __args: {id: Scalars['String']} }
+    verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
+    sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
     updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
@@ -5931,9 +5947,6 @@ export interface MutationGenqlSelection{
     updatePublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String'], applicationId?: (Scalars['String'] | null)} })
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
-    createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {domain: Scalars['String'], driver: EmailingDomainDriver} })
-    deleteEmailingDomain?: { __args: {id: Scalars['String']} }
-    verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     syncMarketplaceCatalog?: boolean | number
@@ -6162,6 +6175,8 @@ export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null)
 export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
 
 export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+
+export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from?: (Scalars['String'] | null),replyTo?: (Scalars['String'][] | null)}
 
 export interface CreateRoleInput {id?: (Scalars['String'] | null),label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null)}
 
@@ -7876,6 +7891,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isEmailingDomain = (obj?: { __typename?: any } | null): obj is EmailingDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
       return EmailingDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
+    export const isSendEmailViaDomainOutput = (obj?: { __typename?: any } | null): obj is SendEmailViaDomainOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
+      return SendEmailViaDomainOutput_possibleTypes.includes(obj.__typename)
     }
     
 

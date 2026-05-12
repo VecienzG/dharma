@@ -78,6 +78,19 @@ export class EmailingDomainService {
       throw new Error('Emailing domain not found');
     }
 
+    try {
+      const driver = this.emailingDomainDriverFactory.getCurrentDriver();
+
+      await driver.cleanupDomain({
+        domain: emailingDomain.domain,
+        workspaceId: emailingDomain.workspaceId,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Driver cleanup for ${emailingDomain.domain} (workspace ${emailingDomain.workspaceId}) failed; removing DB row anyway: ${error}`,
+      );
+    }
+
     await this.emailingDomainRepository.delete({
       id: emailingDomain.id,
     });

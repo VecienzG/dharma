@@ -2390,6 +2390,10 @@ enum EmailingDomainStatus {
   TEMPORARY_FAILURE
 }
 
+type SendEmailViaDomainOutput {
+  messageId: String!
+}
+
 type AutocompleteResult {
   text: String!
   placeId: String!
@@ -2996,6 +3000,7 @@ type Query {
   ): IndexConnection!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
+  getEmailingDomains: [EmailingDomain!]!
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3057,7 +3062,6 @@ type Query {
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
-  getEmailingDomains: [EmailingDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
 }
@@ -3232,6 +3236,10 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
+  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
+  deleteEmailingDomain(id: String!): Boolean!
+  verifyEmailingDomain(id: String!): EmailingDomain!
+  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3333,9 +3341,6 @@ type Mutation {
   updatePublicDomain(domain: String!, applicationId: String): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
-  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
-  deleteEmailingDomain(id: String!): Boolean!
-  verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
   syncMarketplaceCatalog: Boolean!
@@ -3967,6 +3972,18 @@ input UpdateAgentInput {
   responseFormat: JSON
   modelConfiguration: JSON
   evaluationInputs: [String!]
+}
+
+input SendEmailViaDomainInput {
+  emailingDomainId: String!
+  to: [String!]!
+  cc: [String!]
+  bcc: [String!]
+  subject: String!
+  text: String!
+  html: String
+  from: String
+  replyTo: [String!]
 }
 
 input CreateRoleInput {

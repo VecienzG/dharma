@@ -4,6 +4,7 @@ import {
   CreateConfigurationSetCommand,
   CreateConfigurationSetEventDestinationCommand,
   CreateContactListCommand,
+  CreateTenantResourceAssociationCommand,
   PutAccountSuppressionAttributesCommand,
   PutEmailIdentityMailFromAttributesCommand,
   UpdateReputationEntityPolicyCommand,
@@ -44,8 +45,42 @@ export class AwsSesBootstrapService {
     await this.ensureConfigurationSet(input.configurationSetName);
     await this.ensureEventDestination(input.configurationSetName, config);
     await this.ensureContactList(input.contactListName);
+    await this.associateTenantResources(input, config);
     await this.attachReputationPolicy(input.tenantName, config);
     await this.configureCustomMailFrom(input.domain);
+  }
+
+  private async associateTenantResources(
+    input: BootstrapInput,
+    config: AwsSesDriverConfig,
+  ): Promise<void> {
+    const configurationSetArn = `arn:aws:ses:${config.region}:${config.accountId}:configuration-set/${input.configurationSetName}`;
+
+    await this.associateResourceWithTenant(
+      input.tenantName,
+      configurationSetArn,
+    );
+  }
+
+  private async associateResourceWithTenant(
+    tenantName: string,
+    resourceArn: string,
+  ): Promise<void> {
+    const sesClient = this.awsSesClientProvider.getSESClient();
+
+    try {
+      await sesClient.send(
+        new CreateTenantResourceAssociationCommand({
+          TenantName: tenantName,
+          ResourceArn: resourceArn,
+        }),
+      );
+      this.logger.log(`Associated ${resourceArn} with tenant ${tenantName}`);
+    } catch (error) {
+      if (error?.name !== 'AlreadyExistsException') {
+        throw error;
+      }
+    }
   }
 
   private async ensureAccountSuppressionEnabled(): Promise<void> {

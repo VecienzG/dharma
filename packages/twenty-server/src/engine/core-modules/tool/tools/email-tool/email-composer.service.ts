@@ -350,9 +350,14 @@ export class EmailComposerService {
       workspaceId,
     );
 
-    const messageChannel = connectedAccount.messageChannels.find(
-      (channel) => channel.handle === connectedAccount.handle,
-    );
+    const isEmailGroup =
+      connectedAccount.provider === ConnectedAccountProvider.EMAIL_GROUP;
+
+    const messageChannel = isEmailGroup
+      ? connectedAccount.messageChannels[0]
+      : connectedAccount.messageChannels.find(
+          (channel) => channel.handle === connectedAccount.handle,
+        );
 
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
@@ -375,7 +380,11 @@ export class EmailComposerService {
       );
     }
 
-    const connectedAccountWithFreshTokens = isDefined(messageChannel)
+    const needsTokenRefresh =
+      isDefined(messageChannel) &&
+      connectedAccount.provider !== ConnectedAccountProvider.EMAIL_GROUP;
+
+    const connectedAccountWithFreshTokens = needsTokenRefresh
       ? await this.refreshConnectedAccountTokens(
           connectedAccount,
           workspaceId,

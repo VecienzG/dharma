@@ -4,6 +4,8 @@ import {
   CreateEmailIdentityCommand,
   CreateTenantCommand,
   CreateTenantResourceAssociationCommand,
+  DeleteEmailIdentityCommand,
+  DeleteTenantResourceAssociationCommand,
   GetEmailIdentityCommand,
   PutEmailIdentityDkimAttributesCommand,
 } from '@aws-sdk/client-sesv2';
@@ -11,6 +13,7 @@ import {
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import {
   type DomainBootstrapInput,
+  type DomainCleanupInput,
   type DomainStatusInput,
   type DomainVerificationInput,
   type EmailingDomainDriverInterface,
@@ -132,6 +135,38 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       configurationSetName: this.buildConfigurationSetName(input.workspaceId),
       contactListName: this.buildContactListName(input.workspaceId),
     });
+  }
+
+  async cleanupDomain(input: DomainCleanupInput): Promise<void> {
+    const sesClient = this.awsSesClientProvider.getSESClient();
+    const tenantName = this.buildTenantName(input.workspaceId);
+    const identityArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:identity/${input.domain}`;
+
+    try {
+      await sesClient.send(
+        new DeleteTenantResourceAssociationCommand({
+          TenantName: tenantName,
+          ResourceArn: identityArn,
+        }),
+      );
+    } catch (error) {
+      if (error?.name !== 'NotFoundException') {
+        this.logger.warn(
+          `Failed to detach ${input.domain} from tenant ${tenantName}: ${error}`,
+        );
+      }
+    }
+
+    try {
+      await sesClient.send(
+        new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }),
+      );
+    } catch (error) {
+      if (error?.name === 'NotFoundException') {
+        return;
+      }
+      this.awsSesHandleErrorService.handleAwsSesError(error, 'cleanupDomain');
+    }
   }
 
   private buildTenantName(workspaceId: string): string {

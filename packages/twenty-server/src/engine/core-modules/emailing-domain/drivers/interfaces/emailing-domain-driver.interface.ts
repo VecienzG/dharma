@@ -20,6 +20,11 @@ export type DomainBootstrapInput = {
   workspaceId: string;
 };
 
+export type DomainCleanupInput = {
+  domain: string;
+  workspaceId: string;
+};
+
 export type EmailingDomainVerificationResult = {
   status: EmailingDomainStatus;
   verificationRecords: VerificationRecord[];
@@ -34,6 +39,7 @@ export interface EmailingDomainDriverInterface {
     input: DomainStatusInput,
   ): Promise<EmailingDomainVerificationResult>;
   bootstrap(input: DomainBootstrapInput): Promise<void>;
+  cleanupDomain(input: DomainCleanupInput): Promise<void>;
   sendEmail(
     input: EmailingDomainSendEmailInput,
   ): Promise<EmailingDomainSendEmailResult>;

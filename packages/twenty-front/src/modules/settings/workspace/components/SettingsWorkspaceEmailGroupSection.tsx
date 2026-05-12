@@ -19,8 +19,8 @@ export const SettingsWorkspaceEmailGroupSection = () => {
 
   return (
     <SettingsTableListSection<MessageChannel>
-      title={t`Email Groups`}
-      description={t`Workspace-level shared addresses that receive forwarded mail.`}
+      title={t`Email Handles`}
+      description={t`Shared addresses your workspace uses to send and receive email.`}
       items={emailGroupChannels}
       columns={[
         { label: t`Source`, Cell: SettingsWorkspaceEmailGroupSourceCell },
@@ -35,7 +35,7 @@ export const SettingsWorkspaceEmailGroupSection = () => {
           messageChannelId: channel.id,
         })
       }
-      footerButtonLabel={t`Add email group`}
+      footerButtonLabel={t`Add email handle`}
       onFooterButtonClick={() =>
         navigateSettings(SettingsPath.NewEmailGroupChannel)
       }
