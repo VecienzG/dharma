@@ -1,9 +1,12 @@
 import React from 'react';
+import { ClerkProvider } from '@clerk/clerk-react';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   const currentWorkspaceMembers = useAtomStateValue(
@@ -14,13 +17,15 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   );
 
   return (
-    <AuthContext.Provider
-      value={{
-        currentWorkspaceMembers,
-        currentWorkspaceDeletedMembers,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      <AuthContext.Provider
+        value={{
+          currentWorkspaceMembers,
+          currentWorkspaceDeletedMembers,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    </ClerkProvider>
   );
 };

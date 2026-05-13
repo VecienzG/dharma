@@ -19,6 +19,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { AuthClerkModule } from 'src/modules/dharma/auth-clerk/auth-clerk.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
 import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -88,6 +89,7 @@ import { FileModule } from './file/file.module';
     HealthModule,
     AuditModule,
     AuthModule,
+    AuthClerkModule,
     BillingModule,
     BillingWebhookModule,
     MessagingWebhooksModule,

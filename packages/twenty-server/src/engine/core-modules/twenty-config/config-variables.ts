@@ -229,6 +229,53 @@ export class ConfigVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLERK_AUTH,
+    isSensitive: false,
+    description: 'Clerk publishable key (frontend); backend reads for logging',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLERK_PUBLISHABLE_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLERK_AUTH,
+    isSensitive: true,
+    description: 'Clerk server-side secret key (Backend API access)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLERK_SECRET_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLERK_AUTH,
+    isSensitive: true,
+    description: 'Clerk webhook signing secret (Svix, whsec_...)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLERK_WEBHOOK_SIGNING_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLERK_AUTH,
+    isSensitive: false,
+    description:
+      'Clerk JWKS URL (e.g. https://<frontend>.clerk.accounts.dev/.well-known/jwks.json)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLERK_JWT_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLERK_AUTH,
+    isSensitive: false,
+    description:
+      'Optional Clerk JWT issuer for iss claim validation (e.g. https://<frontend>.clerk.accounts.dev)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CLERK_JWT_ISSUER: string;
+
   /**
    * @deprecated Use is now GA - record page layouts are always seeded
    */
