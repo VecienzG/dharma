@@ -62,7 +62,7 @@ export class UserEntity {
   @Column()
   email: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'varchar' })
   clerkUserId: string | null;
 

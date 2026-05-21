@@ -6,12 +6,15 @@ import {
   HttpStatus,
   Post,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 import { ClerkJwtService } from '../services/clerk-jwt.service';
 import { ClerkUserSyncService } from '../services/clerk-user-sync.service';
@@ -27,6 +30,7 @@ export class ClerkExchangeController {
 
   @Post('exchange')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async exchange(
     @Headers('authorization') authorization?: string,
     @Body() body?: { workspaceId?: string },

@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useAuth as useClerkAuth } from '@clerk/clerk-react';
-import { useSetRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useClerkExchange = () => {
   const { getToken, isSignedIn, isLoaded } = useClerkAuth();
-  const setTokenPair = useSetRecoilState(tokenPairState);
+  const setTokenPair = useSetAtomState(tokenPairState);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;

@@ -7,11 +7,14 @@ import {
   Post,
   RawBodyRequest,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Webhook } from 'svix';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 import { ClerkUserSyncService } from '../services/clerk-user-sync.service';
 
@@ -37,6 +40,7 @@ export class ClerkWebhookController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async handle(
     @Req() req: RawBodyRequest<Request>,
     @Headers('svix-id') svixId: string,
