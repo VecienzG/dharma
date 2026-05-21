@@ -1,4 +1,9 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -30,8 +35,16 @@ export class ClerkJwtService {
   }
 
   async verify(token: string): Promise<ClerkClaims> {
+    let jwks: ReturnType<typeof createRemoteJWKSet>;
+
     try {
-      const { payload } = await jwtVerify(token, this.getJwks(), {
+      jwks = this.getJwks();
+    } catch (e) {
+      throw new InternalServerErrorException((e as Error).message);
+    }
+
+    try {
+      const { payload } = await jwtVerify(token, jwks, {
         issuer: this.configService.get('CLERK_JWT_ISSUER') ?? undefined,
       });
       return payload as ClerkClaims;
