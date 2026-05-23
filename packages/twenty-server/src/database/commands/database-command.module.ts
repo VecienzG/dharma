@@ -47,6 +47,9 @@ import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { DharmaSeedSchemaCommand } from 'src/database/commands/dharma-seed-schema.command';
+import { DharmaWorkspaceSeederService } from 'src/modules/dharma/workspace-seeder/dharma-workspace-seeder.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
@@ -85,6 +88,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceCacheModule,
     WorkspaceVersionModule,
     UpgradeModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -100,6 +104,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
+    DharmaSeedSchemaCommand,
+    DharmaWorkspaceSeederService,
   ],
 })
 export class DatabaseCommandModule {}
