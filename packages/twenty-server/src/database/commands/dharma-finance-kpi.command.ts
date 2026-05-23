@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { DharmaFinanceKpiService } from 'src/modules/dharma/finance/services/dharma-finance-kpi.service';
 
 type DharmaFinanceKpiOptions = {
@@ -19,6 +21,7 @@ export class DharmaFinanceKpiCommand extends CommandRunner {
 
   constructor(
     private readonly dharmaFinanceKpiService: DharmaFinanceKpiService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {
     super();
   }
@@ -53,11 +56,16 @@ export class DharmaFinanceKpiCommand extends CommandRunner {
     options: DharmaFinanceKpiOptions,
   ): Promise<void> {
     try {
-      const kpi = await this.dharmaFinanceKpiService.computeKpi({
-        workspaceId: options.workspaceId,
-        year: options.year,
-        month: options.month,
-      });
+      const authContext = buildSystemAuthContext(options.workspaceId);
+      const kpi = await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.dharmaFinanceKpiService.computeKpi({
+            workspaceId: options.workspaceId,
+            year: options.year,
+            month: options.month,
+          }),
+        authContext,
+      );
 
       const fmt = (n: number) =>
         n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });

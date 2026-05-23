@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { DharmaSplitEngineService } from 'src/modules/dharma/finance/services/dharma-split-engine.service';
 
 type DharmaRecomputeSplitsOptions = {
@@ -21,6 +23,7 @@ export class DharmaFinanceRecomputeSplitsCommand extends CommandRunner {
 
   constructor(
     private readonly dharmaSplitEngineService: DharmaSplitEngineService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {
     super();
   }
@@ -49,11 +52,16 @@ export class DharmaFinanceRecomputeSplitsCommand extends CommandRunner {
     const dryRun = options.dryRun ?? false;
 
     try {
+      const authContext = buildSystemAuthContext(options.workspaceId);
       const result =
-        await this.dharmaSplitEngineService.recomputeAllSplits({
-          workspaceId: options.workspaceId,
-          dryRun,
-        });
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.dharmaSplitEngineService.recomputeAllSplits({
+              workspaceId: options.workspaceId,
+              dryRun,
+            }),
+          authContext,
+        );
 
       this.logger.log(
         `Done. processed=${result.processed} updated=${result.updated} skipped=${result.skipped}${dryRun ? ' (dry run)' : ''}`,
