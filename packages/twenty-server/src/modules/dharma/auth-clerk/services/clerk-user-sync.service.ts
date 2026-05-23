@@ -21,9 +21,9 @@ export class ClerkUserSyncService {
   private readonly logger = new Logger(ClerkUserSyncService.name);
 
   constructor(
-    @InjectRepository(UserEntity, 'core')
+    @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(WorkspaceEntity, 'core')
+    @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
