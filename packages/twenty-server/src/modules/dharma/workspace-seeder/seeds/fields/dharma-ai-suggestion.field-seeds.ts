@@ -9,10 +9,25 @@ export const DHARMA_AI_SUGGESTION_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Kind',
     icon: 'IconCategory',
     options: [
-      { label: 'Task Priority', value: 'TASK_PRIORITY', position: 0, color: 'red' },
+      {
+        label: 'Task Priority',
+        value: 'TASK_PRIORITY',
+        position: 0,
+        color: 'red',
+      },
       { label: 'Follow Up', value: 'FOLLOWUP', position: 1, color: 'yellow' },
-      { label: 'Payment Alert', value: 'PAYMENT', position: 2, color: 'orange' },
-      { label: 'Revenue Alert', value: 'REVENUE_ALERT', position: 3, color: 'green' },
+      {
+        label: 'Payment Alert',
+        value: 'PAYMENT',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        label: 'Revenue Alert',
+        value: 'REVENUE_ALERT',
+        position: 3,
+        color: 'green',
+      },
       { label: 'Insight', value: 'INSIGHT', position: 4, color: 'blue' },
     ],
   },

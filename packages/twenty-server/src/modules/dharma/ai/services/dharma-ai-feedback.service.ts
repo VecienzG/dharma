@@ -33,11 +33,12 @@ export class DharmaAiFeedbackService {
   async resolve(input: ResolveFeedbackInput): Promise<ResolveFeedbackResult> {
     const { workspaceId, suggestionId, status, comment } = input;
 
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaAiSuggestionRecord>(
-      workspaceId,
-      'dharmaAiSuggestion',
-      { shouldBypassPermissionChecks: true },
-    );
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaAiSuggestionRecord>(
+        workspaceId,
+        'dharmaAiSuggestion',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const suggestion = await repo.findOne({ where: { id: suggestionId } });
 
@@ -90,9 +91,10 @@ export class DharmaAiFeedbackService {
     // REJECTED feedback becomes a RULE memory — explicit "don't suggest this again"
     const kind = status === 'ACCEPTED' ? 'PATTERN' : 'RULE';
 
-    const baseContent = status === 'ACCEPTED'
-      ? `User accepted "${suggestion.kind}" suggestion: ${suggestion.title}.`
-      : `User rejected "${suggestion.kind}" suggestion: ${suggestion.title}. Do not surface again unless context clearly differs.`;
+    const baseContent =
+      status === 'ACCEPTED'
+        ? `User accepted "${suggestion.kind}" suggestion: ${suggestion.title}.`
+        : `User rejected "${suggestion.kind}" suggestion: ${suggestion.title}. Do not surface again unless context clearly differs.`;
 
     const content = comment
       ? `${baseContent} User note: ${comment}`

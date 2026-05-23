@@ -17,6 +17,8 @@ import { DHARMA_COMPANY_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspa
 import { DHARMA_EXPENSE_ENTRY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-expense-entry.field-seeds';
 import { DHARMA_INCOME_ADVANCE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-income-advance.field-seeds';
 import { DHARMA_INCOME_ENTRY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-income-entry.field-seeds';
+import { DHARMA_NOTIFICATION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-notification.field-seeds';
+import { DHARMA_NOTIFICATION_PREFERENCE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-notification-preference.field-seeds';
 import { DHARMA_PERSON_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-person-extension.field-seeds';
 import { DHARMA_PROJECT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-project.field-seeds';
 import { DHARMA_QUOTE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote.field-seeds';
@@ -27,6 +29,8 @@ import { DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED } from 'src/modules/dharma/works
 import { DHARMA_EXPENSE_ENTRY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-expense-entry.object-seed';
 import { DHARMA_INCOME_ADVANCE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-income-advance.object-seed';
 import { DHARMA_INCOME_ENTRY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-income-entry.object-seed';
+import { DHARMA_NOTIFICATION_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-notification.object-seed';
+import { DHARMA_NOTIFICATION_PREFERENCE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-notification-preference.object-seed';
 import { DHARMA_PROJECT_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-project.object-seed';
 import { DHARMA_QUOTE_LINE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-quote-line.object-seed';
 import { DHARMA_QUOTE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-quote.object-seed';
@@ -92,6 +96,14 @@ export class DharmaWorkspaceSeederService {
       {
         seed: DHARMA_AI_SUGGESTION_OBJECT_SEED,
         fields: DHARMA_AI_SUGGESTION_FIELD_SEEDS,
+      },
+      {
+        seed: DHARMA_NOTIFICATION_OBJECT_SEED,
+        fields: DHARMA_NOTIFICATION_FIELD_SEEDS,
+      },
+      {
+        seed: DHARMA_NOTIFICATION_PREFERENCE_OBJECT_SEED,
+        fields: DHARMA_NOTIFICATION_PREFERENCE_FIELD_SEEDS,
       },
     ];
 
@@ -232,6 +244,37 @@ export class DharmaWorkspaceSeederService {
         fieldIcon: 'IconBulb',
         targetObjectName: DHARMA_AI_SUGGESTION_OBJECT_SEED.nameSingular,
         targetFieldLabel: 'Person',
+        targetFieldIcon: 'IconUser',
+      },
+      // ai suggestion → notifications spawned from it
+      {
+        sourceObjectName: DHARMA_AI_SUGGESTION_OBJECT_SEED.nameSingular,
+        fieldName: 'notifications',
+        fieldLabel: 'Notifications',
+        fieldIcon: 'IconBell',
+        targetObjectName: DHARMA_NOTIFICATION_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'AI Suggestion',
+        targetFieldIcon: 'IconBulb',
+      },
+      // workspaceMember → notifications received
+      {
+        sourceObjectName: 'workspaceMember',
+        fieldName: 'dharmaNotifications',
+        fieldLabel: 'Notifications',
+        fieldIcon: 'IconBell',
+        targetObjectName: DHARMA_NOTIFICATION_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Member',
+        targetFieldIcon: 'IconUser',
+      },
+      // workspaceMember → notification preferences
+      {
+        sourceObjectName: 'workspaceMember',
+        fieldName: 'dharmaNotificationPreferences',
+        fieldLabel: 'Notification Preferences',
+        fieldIcon: 'IconBellRinging',
+        targetObjectName:
+          DHARMA_NOTIFICATION_PREFERENCE_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Member',
         targetFieldIcon: 'IconUser',
       },
     ];

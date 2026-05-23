@@ -35,11 +35,12 @@ export class DharmaAiMemoryService {
   ) {}
 
   async createMemory(input: CreateMemoryInput): Promise<DharmaAiMemoryRecord> {
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaAiMemoryRecord>(
-      input.workspaceId,
-      'dharmaAiMemory',
-      { shouldBypassPermissionChecks: true },
-    );
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaAiMemoryRecord>(
+        input.workspaceId,
+        'dharmaAiMemory',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const now = new Date();
 
@@ -68,11 +69,12 @@ export class DharmaAiMemoryService {
     workspaceId: string;
     limit?: number;
   }): Promise<DharmaAiMemoryRecord[]> {
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaAiMemoryRecord>(
-      workspaceId,
-      'dharmaAiMemory',
-      { shouldBypassPermissionChecks: true },
-    );
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaAiMemoryRecord>(
+        workspaceId,
+        'dharmaAiMemory',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const memories = await repo.find({
       order: { lastUsedAt: 'DESC' },
@@ -113,11 +115,12 @@ export class DharmaAiMemoryService {
     workspaceId: string;
     memoryId: string;
   }): Promise<void> {
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaAiMemoryRecord>(
-      workspaceId,
-      'dharmaAiMemory',
-      { shouldBypassPermissionChecks: true },
-    );
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaAiMemoryRecord>(
+        workspaceId,
+        'dharmaAiMemory',
+        { shouldBypassPermissionChecks: true },
+      );
 
     await repo.update({ id: memoryId }, { lastUsedAt: new Date() });
   }

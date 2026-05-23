@@ -45,7 +45,12 @@ export const DHARMA_AI_MEMORY_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Source',
     icon: 'IconSource',
     options: [
-      { label: 'User Feedback', value: 'USER_FEEDBACK', position: 0, color: 'green' },
+      {
+        label: 'User Feedback',
+        value: 'USER_FEEDBACK',
+        position: 0,
+        color: 'green',
+      },
       { label: 'Manual', value: 'MANUAL', position: 1, color: 'blue' },
       { label: 'Inferred', value: 'INFERRED', position: 2, color: 'gray' },
     ],

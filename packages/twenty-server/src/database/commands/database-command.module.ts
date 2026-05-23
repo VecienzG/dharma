@@ -50,9 +50,11 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
 import { DharmaAiRunCommand } from 'src/database/commands/dharma-ai-run.command';
 import { DharmaFinanceKpiCommand } from 'src/database/commands/dharma-finance-kpi.command';
 import { DharmaFinanceRecomputeSplitsCommand } from 'src/database/commands/dharma-finance-recompute-splits.command';
+import { DharmaNotificationsSendCommand } from 'src/database/commands/dharma-notifications-send.command';
 import { DharmaSeedSchemaCommand } from 'src/database/commands/dharma-seed-schema.command';
 import { DharmaAiModule } from 'src/modules/dharma/ai/dharma-ai.module';
 import { DharmaFinanceModule } from 'src/modules/dharma/finance/dharma-finance.module';
+import { DharmaNotificationsModule } from 'src/modules/dharma/notifications/dharma-notifications.module';
 import { DharmaWorkspaceSeederService } from 'src/modules/dharma/workspace-seeder/dharma-workspace-seeder.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
@@ -96,6 +98,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     DharmaFinanceModule,
     DharmaAiModule,
+    DharmaNotificationsModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -116,6 +119,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     DharmaFinanceRecomputeSplitsCommand,
     DharmaFinanceKpiCommand,
     DharmaAiRunCommand,
+    DharmaNotificationsSendCommand,
   ],
 })
 export class DatabaseCommandModule {}

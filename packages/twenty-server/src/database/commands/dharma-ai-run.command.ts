@@ -38,7 +38,8 @@ export class DharmaAiRunCommand extends CommandRunner {
 
   @Option({
     flags: '--reasoning',
-    description: 'Use the reasoning model (Sonnet 4.6) instead of the default (Haiku 4.5)',
+    description:
+      'Use the reasoning model (Sonnet 4.6) instead of the default (Haiku 4.5)',
   })
   parseReasoning(): boolean {
     return true;
@@ -46,7 +47,8 @@ export class DharmaAiRunCommand extends CommandRunner {
 
   @Option({
     flags: '--rules-only',
-    description: 'Skip LLM step, persist only deterministic signals from the rules engine',
+    description:
+      'Skip LLM step, persist only deterministic signals from the rules engine',
   })
   parseRulesOnly(): boolean {
     return true;
@@ -75,7 +77,12 @@ export class DharmaAiRunCommand extends CommandRunner {
       this.logger.log('──────────────────────────────────────────');
       this.logger.log(`  Rules signals     : ${result.rulesSignalsCount}`);
       this.logger.log(`  LLM signals       : ${result.llmSignalsCount}`);
-      this.logger.log(`  Persisted         : ${result.persistedSuggestionIds.length}`);
+      this.logger.log(
+        `  Persisted         : ${result.persistedSuggestionIds.length}`,
+      );
+      this.logger.log(
+        `  Notifications     : ${result.notificationsDispatched}`,
+      );
       this.logger.log(`  Model             : ${result.modelUsed}`);
       this.logger.log('──────────────────────────────────────────');
     } catch (error) {

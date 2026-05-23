@@ -56,9 +56,13 @@ export class DharmaAiRulesService {
         .then((repo) => repo.find()),
 
       this.twentyORMGlobalManager
-        .getRepository<DharmaIncomeEntryRecord>(workspaceId, 'dharmaIncomeEntry', {
-          shouldBypassPermissionChecks: true,
-        })
+        .getRepository<DharmaIncomeEntryRecord>(
+          workspaceId,
+          'dharmaIncomeEntry',
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        )
         .then((repo) => repo.find()),
 
       this.financeKpiService.computeKpi({ workspaceId }),
@@ -120,10 +124,11 @@ export class DharmaAiRulesService {
         return new Date(person.updatedAt).getTime() < threshold;
       })
       .map((person) => {
-        const personName = [person.name?.firstName, person.name?.lastName]
-          .filter(Boolean)
-          .join(' ')
-          .trim() || person.id;
+        const personName =
+          [person.name?.firstName, person.name?.lastName]
+            .filter(Boolean)
+            .join(' ')
+            .trim() || person.id;
 
         const isHighPriority = person.dharmaPriority === 'HIGH';
 

@@ -13,7 +13,9 @@ import {
   DharmaAiSignal,
   DharmaAiSuggestionRecord,
   REASONING_AI_MODEL,
+  SCORE_HIGH,
 } from 'src/modules/dharma/ai/types/dharma-ai.types';
+import { DharmaNotificationsService } from 'src/modules/dharma/notifications/services/dharma-notifications.service';
 
 type RunOptions = {
   workspaceId: string;
@@ -27,6 +29,7 @@ type RunResult = {
   rulesSignalsCount: number;
   llmSignalsCount: number;
   persistedSuggestionIds: string[];
+  notificationsDispatched: number;
   modelUsed: string;
 };
 
@@ -58,10 +61,15 @@ export class DharmaAiOrchestratorService {
     private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     private readonly rulesService: DharmaAiRulesService,
     private readonly contextService: DharmaAiContextService,
+    private readonly notificationsService: DharmaNotificationsService,
   ) {}
 
   async run(options: RunOptions): Promise<RunResult> {
-    const { workspaceId, useReasoningModel = false, rulesOnly = false } = options;
+    const {
+      workspaceId,
+      useReasoningModel = false,
+      rulesOnly = false,
+    } = options;
 
     const [rulesSignals, context] = await Promise.all([
       this.rulesService.evaluate({ workspaceId }),
@@ -82,16 +90,72 @@ export class DharmaAiOrchestratorService {
       modelUsed: rulesOnly ? 'rules-only' : modelId,
     });
 
+    const notificationsDispatched = await this.notifyHighScoreSignals({
+      workspaceId,
+      signals: allSignals,
+      suggestionIds: persistedSuggestionIds,
+    });
+
     this.logger.log(
-      `AI orchestrator run: workspace=${workspaceId} rules=${rulesSignals.length} llm=${llmSignals.length} persisted=${persistedSuggestionIds.length}`,
+      `AI orchestrator run: workspace=${workspaceId} rules=${rulesSignals.length} llm=${llmSignals.length} persisted=${persistedSuggestionIds.length} notified=${notificationsDispatched}`,
     );
 
     return {
       rulesSignalsCount: rulesSignals.length,
       llmSignalsCount: llmSignals.length,
       persistedSuggestionIds,
+      notificationsDispatched,
       modelUsed: rulesOnly ? 'rules-only' : modelId,
     };
+  }
+
+  private async notifyHighScoreSignals({
+    workspaceId,
+    signals,
+    suggestionIds,
+  }: {
+    workspaceId: string;
+    signals: DharmaAiSignal[];
+    suggestionIds: string[];
+  }): Promise<number> {
+    let dispatched = 0;
+
+    // signals[] and suggestionIds[] align positionally — they were persisted in the same order
+    for (let index = 0; index < signals.length; index += 1) {
+      const signal = signals[index];
+
+      if (signal.score < SCORE_HIGH) {
+        continue;
+      }
+
+      const sourceRecordId = suggestionIds[index];
+
+      try {
+        const result = await this.notificationsService.send({
+          workspaceId,
+          request: {
+            kind: 'AI_SUGGESTION',
+            title: signal.title,
+            body: signal.body,
+            tags: [signal.kind.toLowerCase(), signal.source.toLowerCase()],
+            payload: signal.payload,
+            score: signal.score,
+            sourceKind: 'AI',
+            sourceRecordId,
+          },
+        });
+
+        dispatched += result.sent;
+      } catch (error) {
+        this.logger.error(
+          `Notification dispatch failed for signal "${signal.title}": ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    }
+
+    return dispatched;
   }
 
   private async generateLlmSignals({
@@ -202,11 +266,12 @@ export class DharmaAiOrchestratorService {
       return [];
     }
 
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaAiSuggestionRecord>(
-      workspaceId,
-      'dharmaAiSuggestion',
-      { shouldBypassPermissionChecks: true },
-    );
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaAiSuggestionRecord>(
+        workspaceId,
+        'dharmaAiSuggestion',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const now = new Date();
 
