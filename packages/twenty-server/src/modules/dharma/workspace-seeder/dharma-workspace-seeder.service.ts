@@ -10,14 +10,18 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
+import { DHARMA_COLLABORATOR_PAYOUT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-collaborator-payout.field-seeds';
 import { DHARMA_COMPANY_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-company-extension.field-seeds';
 import { DHARMA_EXPENSE_ENTRY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-expense-entry.field-seeds';
+import { DHARMA_INCOME_ADVANCE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-income-advance.field-seeds';
 import { DHARMA_INCOME_ENTRY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-income-entry.field-seeds';
 import { DHARMA_PERSON_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-person-extension.field-seeds';
 import { DHARMA_PROJECT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-project.field-seeds';
 import { DHARMA_QUOTE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote.field-seeds';
 import { DHARMA_QUOTE_LINE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote-line.field-seeds';
+import { DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-collaborator-payout.object-seed';
 import { DHARMA_EXPENSE_ENTRY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-expense-entry.object-seed';
+import { DHARMA_INCOME_ADVANCE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-income-advance.object-seed';
 import { DHARMA_INCOME_ENTRY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-income-entry.object-seed';
 import { DHARMA_PROJECT_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-project.object-seed';
 import { DHARMA_QUOTE_LINE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-quote-line.object-seed';
@@ -64,6 +68,14 @@ export class DharmaWorkspaceSeederService {
       {
         seed: DHARMA_EXPENSE_ENTRY_OBJECT_SEED,
         fields: DHARMA_EXPENSE_ENTRY_FIELD_SEEDS,
+      },
+      {
+        seed: DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED,
+        fields: DHARMA_COLLABORATOR_PAYOUT_FIELD_SEEDS,
+      },
+      {
+        seed: DHARMA_INCOME_ADVANCE_OBJECT_SEED,
+        fields: DHARMA_INCOME_ADVANCE_FIELD_SEEDS,
       },
     ];
 
@@ -145,6 +157,46 @@ export class DharmaWorkspaceSeederService {
         targetObjectName: DHARMA_INCOME_ENTRY_OBJECT_SEED.nameSingular,
         targetFieldLabel: 'Client',
         targetFieldIcon: 'IconBuildingSkyscraper',
+      },
+      // person (collaborator) → payouts
+      {
+        sourceObjectName: 'person',
+        fieldName: 'dharmaCollaboratorPayouts',
+        fieldLabel: 'Payouts',
+        fieldIcon: 'IconMoneybag',
+        targetObjectName: DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Collaborator',
+        targetFieldIcon: 'IconUser',
+      },
+      // project → collaborator payouts
+      {
+        sourceObjectName: DHARMA_PROJECT_OBJECT_SEED.nameSingular,
+        fieldName: 'collaboratorPayouts',
+        fieldLabel: 'Collaborator Payouts',
+        fieldIcon: 'IconMoneybag',
+        targetObjectName: DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Project',
+        targetFieldIcon: 'IconBriefcase',
+      },
+      // income entry → advances drawn against it
+      {
+        sourceObjectName: DHARMA_INCOME_ENTRY_OBJECT_SEED.nameSingular,
+        fieldName: 'advances',
+        fieldLabel: 'Advances',
+        fieldIcon: 'IconArrowUpRight',
+        targetObjectName: DHARMA_INCOME_ADVANCE_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Income Entry',
+        targetFieldIcon: 'IconCurrencyEuro',
+      },
+      // person → income advances received
+      {
+        sourceObjectName: 'person',
+        fieldName: 'dharmaIncomeAdvances',
+        fieldLabel: 'Income Advances',
+        fieldIcon: 'IconArrowUpRight',
+        targetObjectName: DHARMA_INCOME_ADVANCE_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Recipient',
+        targetFieldIcon: 'IconUser',
       },
     ];
 
