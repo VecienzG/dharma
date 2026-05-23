@@ -13,9 +13,7 @@ const WORKSPACE_REPO_TOKEN = getRepositoryToken(WorkspaceEntity);
 
 describe('ClerkUserSyncService', () => {
   let service: ClerkUserSyncService;
-  let userRepository: jest.Mocked<
-    Record<string, jest.Mock>
-  >;
+  let userRepository: jest.Mocked<Record<string, jest.Mock>>;
   let workspaceRepository: jest.Mocked<Record<string, jest.Mock>>;
   let userWorkspaceService: jest.Mocked<
     Pick<UserWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace'>
@@ -44,9 +42,7 @@ describe('ClerkUserSyncService', () => {
     };
 
     workspaceRepository = {
-      findOneByOrFail: jest
-        .fn()
-        .mockResolvedValue(MOCK_WORKSPACE),
+      findOneByOrFail: jest.fn().mockResolvedValue(MOCK_WORKSPACE),
       find: jest.fn().mockResolvedValue([MOCK_WORKSPACE]),
     };
 

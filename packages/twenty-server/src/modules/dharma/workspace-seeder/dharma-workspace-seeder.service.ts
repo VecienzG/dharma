@@ -10,6 +10,8 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
+import { DHARMA_AI_MEMORY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-ai-memory.field-seeds';
+import { DHARMA_AI_SUGGESTION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-ai-suggestion.field-seeds';
 import { DHARMA_COLLABORATOR_PAYOUT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-collaborator-payout.field-seeds';
 import { DHARMA_COMPANY_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-company-extension.field-seeds';
 import { DHARMA_EXPENSE_ENTRY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-expense-entry.field-seeds';
@@ -19,6 +21,8 @@ import { DHARMA_PERSON_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspac
 import { DHARMA_PROJECT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-project.field-seeds';
 import { DHARMA_QUOTE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote.field-seeds';
 import { DHARMA_QUOTE_LINE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote-line.field-seeds';
+import { DHARMA_AI_MEMORY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-ai-memory.object-seed';
+import { DHARMA_AI_SUGGESTION_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-ai-suggestion.object-seed';
 import { DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-collaborator-payout.object-seed';
 import { DHARMA_EXPENSE_ENTRY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-expense-entry.object-seed';
 import { DHARMA_INCOME_ADVANCE_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-income-advance.object-seed';
@@ -47,7 +51,11 @@ export class DharmaWorkspaceSeederService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async seedDharmaSchema({ workspaceId }: { workspaceId: string }): Promise<void> {
+  async seedDharmaSchema({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
     this.logger.log('Seeding Dharma custom objects...');
 
     // 1. Create custom objects (idempotent)
@@ -76,6 +84,14 @@ export class DharmaWorkspaceSeederService {
       {
         seed: DHARMA_INCOME_ADVANCE_OBJECT_SEED,
         fields: DHARMA_INCOME_ADVANCE_FIELD_SEEDS,
+      },
+      {
+        seed: DHARMA_AI_MEMORY_OBJECT_SEED,
+        fields: DHARMA_AI_MEMORY_FIELD_SEEDS,
+      },
+      {
+        seed: DHARMA_AI_SUGGESTION_OBJECT_SEED,
+        fields: DHARMA_AI_SUGGESTION_FIELD_SEEDS,
       },
     ];
 
@@ -198,6 +214,26 @@ export class DharmaWorkspaceSeederService {
         targetFieldLabel: 'Recipient',
         targetFieldIcon: 'IconUser',
       },
+      // project → ai suggestions
+      {
+        sourceObjectName: DHARMA_PROJECT_OBJECT_SEED.nameSingular,
+        fieldName: 'aiSuggestions',
+        fieldLabel: 'AI Suggestions',
+        fieldIcon: 'IconBulb',
+        targetObjectName: DHARMA_AI_SUGGESTION_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Project',
+        targetFieldIcon: 'IconBriefcase',
+      },
+      // person → ai suggestions
+      {
+        sourceObjectName: 'person',
+        fieldName: 'dharmaAiSuggestions',
+        fieldLabel: 'AI Suggestions',
+        fieldIcon: 'IconBulb',
+        targetObjectName: DHARMA_AI_SUGGESTION_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Person',
+        targetFieldIcon: 'IconUser',
+      },
     ];
 
     await this.ensureRelationsExist({ workspaceId, relations });
@@ -220,7 +256,9 @@ export class DharmaWorkspaceSeederService {
     );
 
     if (isDefined(existing)) {
-      this.logger.log(`Object "${seed.nameSingular}" already exists, skipping.`);
+      this.logger.log(
+        `Object "${seed.nameSingular}" already exists, skipping.`,
+      );
 
       return;
     }
@@ -254,18 +292,21 @@ export class DharmaWorkspaceSeederService {
       });
 
     if (!isDefined(objectMetadata)) {
-      throw new Error(
-        `Object metadata not found for: ${objectNameSingular}`,
-      );
+      throw new Error(`Object metadata not found for: ${objectNameSingular}`);
     }
 
     // Get existing field names to skip duplicates
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
       );
 
-    const { idByNameSingular } = buildObjectIdByNameMaps(flatObjectMetadataMaps);
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
     const objectId = idByNameSingular[objectNameSingular];
     const objectFlatMetadata = isDefined(objectId)
       ? findFlatEntityByIdInFlatEntityMaps({
@@ -326,10 +367,15 @@ export class DharmaWorkspaceSeederService {
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
       );
 
-    const { idByNameSingular } = buildObjectIdByNameMaps(flatObjectMetadataMaps);
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
 
     for (const relation of relations) {
       const sourceObjectId = idByNameSingular[relation.sourceObjectName];
@@ -348,7 +394,8 @@ export class DharmaWorkspaceSeederService {
         flatEntityMaps: flatObjectMetadataMaps,
       });
 
-      const fieldAlreadyExists = isDefined(sourceObjectFlatMetadata) &&
+      const fieldAlreadyExists =
+        isDefined(sourceObjectFlatMetadata) &&
         sourceObjectFlatMetadata.fieldIds.some((fieldId) => {
           const field = findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: fieldId,

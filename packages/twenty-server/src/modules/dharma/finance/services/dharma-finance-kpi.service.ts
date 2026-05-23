@@ -80,7 +80,9 @@ export class DharmaFinanceKpiService {
 
     const period = this.formatPeriod(year, month);
 
-    this.logger.log(`KPI computed for workspace ${workspaceId} period=${period}`);
+    this.logger.log(
+      `KPI computed for workspace ${workspaceId} period=${period}`,
+    );
 
     return {
       period,

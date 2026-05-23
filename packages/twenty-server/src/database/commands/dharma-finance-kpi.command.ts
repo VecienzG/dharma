@@ -57,15 +57,16 @@ export class DharmaFinanceKpiCommand extends CommandRunner {
   ): Promise<void> {
     try {
       const authContext = buildSystemAuthContext(options.workspaceId);
-      const kpi = await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.dharmaFinanceKpiService.computeKpi({
-            workspaceId: options.workspaceId,
-            year: options.year,
-            month: options.month,
-          }),
-        authContext,
-      );
+      const kpi =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.dharmaFinanceKpiService.computeKpi({
+              workspaceId: options.workspaceId,
+              year: options.year,
+              month: options.month,
+            }),
+          authContext,
+        );
 
       const fmt = (n: number) =>
         n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });

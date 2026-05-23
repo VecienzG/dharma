@@ -15,7 +15,11 @@ import { ClerkUserSyncService } from './services/clerk-user-sync.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, UserWorkspaceEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      UserWorkspaceEntity,
+      WorkspaceEntity,
+    ]),
     AuthModule,
     UserWorkspaceModule,
     TwentyConfigModule,

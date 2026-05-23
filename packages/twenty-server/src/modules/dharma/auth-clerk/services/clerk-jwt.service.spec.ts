@@ -10,8 +10,7 @@ const mockCreateRemoteJWKSet = jest.fn();
 
 jest.mock('jose', () => ({
   jwtVerify: (...args: unknown[]) => mockJwtVerify(...args),
-  createRemoteJWKSet: (...args: unknown[]) =>
-    mockCreateRemoteJWKSet(...args),
+  createRemoteJWKSet: (...args: unknown[]) => mockCreateRemoteJWKSet(...args),
 }));
 
 describe('ClerkJwtService', () => {

@@ -25,7 +25,9 @@ export class DharmaSplitEngineService {
   ): CassettiSplit {
     const config =
       splitConfigOverride ??
-      (incomeType === 'INVOICED' ? INVOICED_SPLIT_DEFAULTS : CASH_SPLIT_DEFAULTS);
+      (incomeType === 'INVOICED'
+        ? INVOICED_SPLIT_DEFAULTS
+        : CASH_SPLIT_DEFAULTS);
 
     const taxAmountMicros = Math.round(
       (grossAmountMicros * config.taxPercent) / 100,
