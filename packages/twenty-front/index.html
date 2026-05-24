@@ -1,33 +1,36 @@
 <!doctype html>
-<html lang="en" translate="no" class="light">
+<html lang="it" translate="no" class="light">
   <head>
     <meta charset="UTF-8" />
 
     <link
       rel="icon"
-      type="image/x-icon"
-      href="/images/icons/android/android-launchericon-48-48.png"
+      type="image/svg+xml"
+      href="/dharma-logo.svg"
       data-rh="true"
     />
-    <link rel="apple-touch-icon" href="/images/icons/ios/192.png" />
+    <link rel="apple-touch-icon" href="/dharma-logo.svg" />
     <link rel="manifest" href="/manifest.json" />
 
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="A modern open-source CRM" />
+    <meta name="theme-color" content="#3B3B98" />
     <meta
-      property="og:image"
-      content="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/social-card.png"
+      name="description"
+      content="Dharma — Il tuo studio creativo, allineato."
     />
-    <meta property="og:description" content="A modern open-source CRM" />
-    <meta property="og:title" content="Twenty" />
+    <meta property="og:image" content="/dharma-logo.svg" />
+    <meta
+      property="og:description"
+      content="Dharma — Il tuo studio creativo, allineato."
+    />
+    <meta property="og:title" content="Dharma" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:image"
-      content="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/social-card.png"
-    />
+    <meta name="twitter:image" content="/dharma-logo.svg" />
 
-    <meta name="twitter:description" content="A modern open-source CRM" />
-    <meta name="twitter:title" content="Twenty" />
+    <meta
+      name="twitter:description"
+      content="Dharma — Il tuo studio creativo, allineato."
+    />
+    <meta name="twitter:title" content="Dharma" />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
@@ -37,7 +40,7 @@
       href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&display=swap"
     />
 
-    <title>Twenty</title>
+    <title>Dharma</title>
     <!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
       window._env_ = {
@@ -66,20 +69,21 @@
     </script>
     <style>
       :root {
-        /* THEME_DARK.background.tertiary */
-        --theme-dark-background-tertiary: #1d1d1d;
-        /* THEME_LIGHT.background.tertiary */
-        --theme-light-background-tertiary: #f1f1f1;
+        /* Dharma — initial paint background (before JS hydrates theme overrides) */
+        --theme-dark-background-tertiary: #0f0f12;
+        --theme-light-background-tertiary: #faf8f5;
       }
 
       @media (prefers-color-scheme: dark) {
-        html, body {
+        html,
+        body {
           background-color: var(--theme-dark-background-tertiary);
         }
       }
 
       @media (prefers-color-scheme: light) {
-        html, body {
+        html,
+        body {
           background-color: var(--theme-light-background-tertiary);
         }
       }

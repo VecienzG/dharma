@@ -2883,7 +2883,7 @@ msgstr "di {author}"
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
-msgstr "Utilizzando Twenty, accetti la"
+msgstr "Usando Dharma, accetti i"
 
 #. js-lingui-id: Yx41df
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -3295,7 +3295,7 @@ msgstr "Controlla la tua casella di posta per verificare il tuo nuovo indirizzo 
 #. js-lingui-id: SxwQE8
 #: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
 msgid "Checkout session error. Please retry or contact Twenty team"
-msgstr "Errore nella sessione di pagamento. Riprova o contatta il team di Twenty"
+msgstr "Errore nella sessione di pagamento. Riprova o contatta il team Dharma"
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3310,7 +3310,7 @@ msgstr "Cinese tradizionale"
 #. js-lingui-id: NFfUic
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
-msgstr "Scegli uno Spazio di Lavoro"
+msgstr "Scegli uno studio"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -4361,7 +4361,7 @@ msgstr "Crea spazio di lavoro"
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Create your workspace"
-msgstr "Crea il tuo spazio di lavoro"
+msgstr "Crea il tuo studio"
 
 #. js-lingui-id: OHF273
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -6573,7 +6573,7 @@ msgstr "Errore durante l'annullamento del cambio di piano."
 #. js-lingui-id: QmR+2U
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
-msgstr "Errore durante la conclusione del periodo di prova. Si prega di contattare il team di Twenty."
+msgstr "Errore durante la conclusione del periodo di prova. Contatta il team Dharma."
 
 #. js-lingui-id: 5g78zo
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -11742,7 +11742,7 @@ msgstr "Nome pagina"
 #. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found | Twenty"
-msgstr "Pagina non trovata | Twenty"
+msgstr "Pagina non trovata | Dharma"
 
 #. js-lingui-id: sF+Xp9
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
@@ -14106,7 +14106,7 @@ msgstr "Chiave di configurazione copiata negli appunti"
 #. js-lingui-id: NQNJjc
 #: src/pages/auth/SignInUp.tsx
 msgid "Setup your 2FA"
-msgstr "Configura il tuo 2FA"
+msgstr "Configura la verifica in due passaggi"
 
 #. js-lingui-id: dsCM1m
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -14882,7 +14882,7 @@ msgstr "Sincronizza con Outlook"
 #. js-lingui-id: +9x4tK
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync your Emails and Calendar with Twenty. Choose your privacy settings."
-msgstr "Sincronizza le tue email e il calendario con Twenty. Scegli le tue impostazioni sulla privacy."
+msgstr "Sincronizza email e calendario con Dharma. Scegli le tue impostazioni privacy."
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -15913,7 +15913,7 @@ msgstr "Turchese"
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
-msgstr "Campi di Twenty"
+msgstr "Campi Dharma"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -17084,12 +17084,12 @@ msgstr ""
 #. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to Twenty"
-msgstr "Benvenuto in Twenty"
+msgstr "Benvenuto in Dharma"
 
 #. js-lingui-id: t8ZvkC
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
-msgstr "Benvenuto nel tuo spazio di lavoro"
+msgstr "Benvenuto nel tuo studio"
 
 #. js-lingui-id: Vin3Dv
 #: src/pages/auth/SignInUp.tsx
