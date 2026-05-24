@@ -106,6 +106,30 @@ const NotFound = lazy(() =>
   })),
 );
 
+const DharmaDashboardPage = lazy(() =>
+  import('~/pages/dharma/DharmaDashboardPage').then((module) => ({
+    default: module.DharmaDashboardPage,
+  })),
+);
+
+const DharmaFinancePage = lazy(() =>
+  import('~/pages/dharma/DharmaFinancePage').then((module) => ({
+    default: module.DharmaFinancePage,
+  })),
+);
+
+const DharmaAiInboxPage = lazy(() =>
+  import('~/pages/dharma/DharmaAiInboxPage').then((module) => ({
+    default: module.DharmaAiInboxPage,
+  })),
+);
+
+const DharmaAiMemoryPage = lazy(() =>
+  import('~/pages/dharma/DharmaAiMemoryPage').then((module) => ({
+    default: module.DharmaAiMemoryPage,
+  })),
+);
+
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
@@ -231,6 +255,38 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <StandalonePageLayoutPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.DharmaDashboard}
+            element={
+              <LazyRoute>
+                <DharmaDashboardPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.DharmaFinance}
+            element={
+              <LazyRoute>
+                <DharmaFinancePage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.DharmaAiInbox}
+            element={
+              <LazyRoute>
+                <DharmaAiInboxPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.DharmaAiMemory}
+            element={
+              <LazyRoute>
+                <DharmaAiMemoryPage />
               </LazyRoute>
             }
           />

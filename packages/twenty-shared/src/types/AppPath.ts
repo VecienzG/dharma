@@ -25,6 +25,12 @@ export enum AppPath {
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
   PageLayoutPage = '/page/:pageLayoutId',
 
+  // Dharma — custom views
+  DharmaDashboard = '/dharma/dashboard',
+  DharmaFinance = '/dharma/finance',
+  DharmaAiInbox = '/dharma/ai/inbox',
+  DharmaAiMemory = '/dharma/ai/memory',
+
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,
   Developers = `developers`,
