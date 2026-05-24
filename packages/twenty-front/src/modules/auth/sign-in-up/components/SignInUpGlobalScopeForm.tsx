@@ -1,3 +1,11 @@
+// TODO(dharma phase 1.C): Clerk sign-in integration is a gap. Adding a
+// dedicated route using `<SignIn />` from `@clerk/clerk-react` requires
+// invasive changes to Twenty's existing sign-in routing (workspace-scope
+// forms, SSO, 2FA flows). For now `<ClerkProvider>` is mounted in
+// `AuthProvider.tsx` and `useClerkExchange` performs the token exchange
+// once a user is signed in via Clerk elsewhere. A future PR will add a
+// `/sign-in` route hosting Clerk's `<SignIn />` component and wire
+// `useClerkExchange` to redirect post-sign-in.
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';

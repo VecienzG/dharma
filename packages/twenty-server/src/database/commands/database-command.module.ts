@@ -47,6 +47,16 @@ import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { DharmaAiRunCommand } from 'src/database/commands/dharma-ai-run.command';
+import { DharmaFinanceKpiCommand } from 'src/database/commands/dharma-finance-kpi.command';
+import { DharmaFinanceRecomputeSplitsCommand } from 'src/database/commands/dharma-finance-recompute-splits.command';
+import { DharmaNotificationsSendCommand } from 'src/database/commands/dharma-notifications-send.command';
+import { DharmaSeedSchemaCommand } from 'src/database/commands/dharma-seed-schema.command';
+import { DharmaAiModule } from 'src/modules/dharma/ai/dharma-ai.module';
+import { DharmaFinanceModule } from 'src/modules/dharma/finance/dharma-finance.module';
+import { DharmaNotificationsModule } from 'src/modules/dharma/notifications/dharma-notifications.module';
+import { DharmaWorkspaceSeederService } from 'src/modules/dharma/workspace-seeder/dharma-workspace-seeder.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
@@ -85,6 +95,10 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceCacheModule,
     WorkspaceVersionModule,
     UpgradeModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    DharmaFinanceModule,
+    DharmaAiModule,
+    DharmaNotificationsModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -100,6 +114,12 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
+    DharmaSeedSchemaCommand,
+    DharmaWorkspaceSeederService,
+    DharmaFinanceRecomputeSplitsCommand,
+    DharmaFinanceKpiCommand,
+    DharmaAiRunCommand,
+    DharmaNotificationsSendCommand,
   ],
 })
 export class DatabaseCommandModule {}

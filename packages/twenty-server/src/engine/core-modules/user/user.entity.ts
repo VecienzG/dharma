@@ -35,6 +35,10 @@ registerEnumType(OnboardingStatus, {
   unique: true,
   where: '"deletedAt" IS NULL',
 })
+@Index('UQ_USER_CLERK_ID', ['clerkUserId'], {
+  unique: true,
+  where: '"clerkUserId" IS NOT NULL AND "deletedAt" IS NULL',
+})
 export class UserEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -57,6 +61,10 @@ export class UserEntity {
   @Field()
   @Column()
   email: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
+  clerkUserId: string | null;
 
   @Field()
   @Column({ default: false })
