@@ -73,4 +73,10 @@ export const DHARMA_INCOME_ENTRY_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Split Config',
     icon: 'IconAdjustments',
   },
+  {
+    type: FieldMetadataType.TEXT,
+    name: 'dharmaLegacyId',
+    label: 'Legacy ID',
+    icon: 'IconDatabaseImport',
+  },
 ];

@@ -46,4 +46,10 @@ export const DHARMA_EXPENSE_ENTRY_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Receipt',
     icon: 'IconReceipt',
   },
+  {
+    type: FieldMetadataType.TEXT,
+    name: 'dharmaLegacyId',
+    label: 'Legacy ID',
+    icon: 'IconDatabaseImport',
+  },
 ];

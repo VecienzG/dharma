@@ -55,3 +55,7 @@ TRANSLATION_QA_REPORT.md
 .playwright-mcp/
 .playwright-cli/
 output/playwright/
+
+# Agent tool artifacts (not part of project)
+.codex/
+AGENTS.md

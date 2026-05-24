@@ -71,4 +71,10 @@ export const DHARMA_PROJECT_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Notes',
     icon: 'IconNotes',
   },
+  {
+    type: FieldMetadataType.TEXT,
+    name: 'dharmaLegacyId',
+    label: 'Legacy ID',
+    icon: 'IconDatabaseImport',
+  },
 ];

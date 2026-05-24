@@ -32,4 +32,10 @@ export const DHARMA_PERSON_EXTENSION_FIELD_SEEDS: FieldMetadataSeed[] = [
       { label: 'Low', value: 'LOW', position: 2, color: 'gray' },
     ],
   },
+  {
+    type: FieldMetadataType.TEXT,
+    name: 'dharmaLegacyId',
+    label: 'Legacy ID',
+    icon: 'IconDatabaseImport',
+  },
 ];

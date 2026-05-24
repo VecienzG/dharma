@@ -21,4 +21,10 @@ export const DHARMA_COMPANY_EXTENSION_FIELD_SEEDS: FieldMetadataSeed[] = [
       { label: 'Other', value: 'OTHER', position: 3, color: 'gray' },
     ],
   },
+  {
+    type: FieldMetadataType.TEXT,
+    name: 'dharmaLegacyId',
+    label: 'Legacy ID',
+    icon: 'IconDatabaseImport',
+  },
 ];
