@@ -12,7 +12,9 @@ import { WebPushDriver } from 'src/modules/dharma/notifications/drivers/web-push
 
 @Injectable()
 export class DharmaNotificationsDispatcherService {
-  private readonly logger = new Logger(DharmaNotificationsDispatcherService.name);
+  private readonly logger = new Logger(
+    DharmaNotificationsDispatcherService.name,
+  );
   private readonly registry: Map<
     DharmaNotificationChannel,
     DharmaNotificationDriver
@@ -23,7 +25,10 @@ export class DharmaNotificationsDispatcherService {
     private readonly webPushDriver: WebPushDriver,
     private readonly telegramDriver: TelegramDriver,
   ) {
-    this.registry = new Map<DharmaNotificationChannel, DharmaNotificationDriver>([
+    this.registry = new Map<
+      DharmaNotificationChannel,
+      DharmaNotificationDriver
+    >([
       ['EMAIL', this.resendDriver],
       ['WEB_PUSH', this.webPushDriver],
       ['TELEGRAM', this.telegramDriver],

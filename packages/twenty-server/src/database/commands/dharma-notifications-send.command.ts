@@ -117,24 +117,25 @@ export class DharmaNotificationsSendCommand extends CommandRunner {
         `Configured channels: ${configured.length > 0 ? configured.join(', ') : '(none — set env vars)'}`,
       );
 
-      const result = await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.notificationsService.send({
-            workspaceId: options.workspaceId,
-            request: {
-              kind: options.kind ?? 'TEST',
-              title: options.title ?? 'Dharma test notification',
-              body:
-                options.body ??
-                'If you can see this, your notification pipeline is wired up.',
-              tags: ['test'],
-              sourceKind: 'MANUAL',
-              channel: options.channel,
-              score: 1,
-            },
-          }),
-        authContext,
-      );
+      const result =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.notificationsService.send({
+              workspaceId: options.workspaceId,
+              request: {
+                kind: options.kind ?? 'TEST',
+                title: options.title ?? 'Dharma test notification',
+                body:
+                  options.body ??
+                  'If you can see this, your notification pipeline is wired up.',
+                tags: ['test'],
+                sourceKind: 'MANUAL',
+                channel: options.channel,
+                score: 1,
+              },
+            }),
+          authContext,
+        );
 
       this.logger.log('──────────────────────────────────────────');
       this.logger.log('  Notification send result');

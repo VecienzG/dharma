@@ -11,6 +11,8 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
 import { DHARMA_AI_MEMORY_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-ai-memory.field-seeds';
+import { DHARMA_ATTACHMENT_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-attachment-extension.field-seeds';
+import { DHARMA_CALENDAR_CONNECTION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-calendar-connection.field-seeds';
 import { DHARMA_AI_SUGGESTION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-ai-suggestion.field-seeds';
 import { DHARMA_COLLABORATOR_PAYOUT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-collaborator-payout.field-seeds';
 import { DHARMA_COMPANY_EXTENSION_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-company-extension.field-seeds';
@@ -24,6 +26,7 @@ import { DHARMA_PROJECT_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/
 import { DHARMA_QUOTE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote.field-seeds';
 import { DHARMA_QUOTE_LINE_FIELD_SEEDS } from 'src/modules/dharma/workspace-seeder/seeds/fields/dharma-quote-line.field-seeds';
 import { DHARMA_AI_MEMORY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-ai-memory.object-seed';
+import { DHARMA_CALENDAR_CONNECTION_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-calendar-connection.object-seed';
 import { DHARMA_AI_SUGGESTION_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-ai-suggestion.object-seed';
 import { DHARMA_COLLABORATOR_PAYOUT_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-collaborator-payout.object-seed';
 import { DHARMA_EXPENSE_ENTRY_OBJECT_SEED } from 'src/modules/dharma/workspace-seeder/seeds/objects/dharma-expense-entry.object-seed';
@@ -105,6 +108,10 @@ export class DharmaWorkspaceSeederService {
         seed: DHARMA_NOTIFICATION_PREFERENCE_OBJECT_SEED,
         fields: DHARMA_NOTIFICATION_PREFERENCE_FIELD_SEEDS,
       },
+      {
+        seed: DHARMA_CALENDAR_CONNECTION_OBJECT_SEED,
+        fields: DHARMA_CALENDAR_CONNECTION_FIELD_SEEDS,
+      },
     ];
 
     for (const { seed, fields } of customObjects) {
@@ -122,6 +129,12 @@ export class DharmaWorkspaceSeederService {
       workspaceId,
       objectNameSingular: 'company',
       fieldSeeds: DHARMA_COMPANY_EXTENSION_FIELD_SEEDS,
+    });
+
+    await this.ensureFieldsExist({
+      workspaceId,
+      objectNameSingular: 'attachment',
+      fieldSeeds: DHARMA_ATTACHMENT_EXTENSION_FIELD_SEEDS,
     });
 
     // 3. Create relations between Dharma objects
@@ -274,6 +287,16 @@ export class DharmaWorkspaceSeederService {
         fieldIcon: 'IconBellRinging',
         targetObjectName:
           DHARMA_NOTIFICATION_PREFERENCE_OBJECT_SEED.nameSingular,
+        targetFieldLabel: 'Member',
+        targetFieldIcon: 'IconUser',
+      },
+      // workspaceMember → calendar connections
+      {
+        sourceObjectName: 'workspaceMember',
+        fieldName: 'dharmaCalendarConnections',
+        fieldLabel: 'Calendar Connections',
+        fieldIcon: 'IconCalendar',
+        targetObjectName: DHARMA_CALENDAR_CONNECTION_OBJECT_SEED.nameSingular,
         targetFieldLabel: 'Member',
         targetFieldIcon: 'IconUser',
       },

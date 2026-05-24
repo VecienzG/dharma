@@ -99,7 +99,7 @@ export class DharmaNotificationsService {
           driverResult.status !== 'SENT' ? driverResult.errorMessage : null,
         providerMessageId:
           driverResult.status === 'SENT'
-            ? driverResult.providerMessageId ?? null
+            ? (driverResult.providerMessageId ?? null)
             : null,
       });
 
@@ -119,26 +119,70 @@ export class DharmaNotificationsService {
     return result;
   }
 
+  // Persist as PENDING with a future scheduledAt — the scheduler cron picks it up later.
+  async enqueueScheduled({
+    workspaceId,
+    request,
+    scheduledAt,
+  }: {
+    workspaceId: string;
+    request: DharmaNotificationRequest;
+    scheduledAt: Date;
+  }): Promise<{ notificationIds: string[] }> {
+    const destinations = await this.preferences.resolveDestinations({
+      workspaceId,
+      kind: request.kind,
+      tags: request.tags ?? [],
+      score: request.score,
+      workspaceMemberId: request.workspaceMemberId,
+      channel: request.channel,
+    });
+
+    const notificationIds: string[] = [];
+
+    for (const pref of destinations) {
+      if (!isDefined(pref.channel)) continue;
+
+      const notificationId = await this.persistPending({
+        workspaceId,
+        request,
+        channel: pref.channel,
+        recipient: pref.endpoint,
+        workspaceMemberId: pref.workspaceMemberId,
+        scheduledAt,
+      });
+
+      notificationIds.push(notificationId);
+    }
+
+    this.logger.log(
+      `Enqueued ${notificationIds.length} scheduled notifications for workspace=${workspaceId} kind=${request.kind} at=${scheduledAt.toISOString()}`,
+    );
+
+    return { notificationIds };
+  }
+
   private async persistPending({
     workspaceId,
     request,
     channel,
     recipient,
     workspaceMemberId,
+    scheduledAt,
   }: {
     workspaceId: string;
     request: DharmaNotificationRequest;
     channel: DharmaNotificationChannel;
     recipient: string | null;
     workspaceMemberId: string | null;
+    scheduledAt?: Date;
   }): Promise<string> {
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaNotificationRecord>(
-      workspaceId,
-      'dharmaNotification',
-      { shouldBypassPermissionChecks: true },
-    );
-
-    const now = new Date();
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaNotificationRecord>(
+        workspaceId,
+        'dharmaNotification',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const saved = await repo.save({
       channel,
@@ -149,12 +193,12 @@ export class DharmaNotificationsService {
       payload: request.payload ?? {},
       recipient,
       status: 'PENDING' as const,
-      scheduledAt: now,
+      scheduledAt: scheduledAt ?? new Date(),
       sourceKind: request.sourceKind,
       sourceRecordId: request.sourceRecordId ?? null,
       workspaceMemberId: workspaceMemberId ?? null,
       aiSuggestionId:
-        request.sourceKind === 'AI' ? request.sourceRecordId ?? null : null,
+        request.sourceKind === 'AI' ? (request.sourceRecordId ?? null) : null,
     });
 
     const persisted = Array.isArray(saved) ? saved[0] : saved;
@@ -180,11 +224,12 @@ export class DharmaNotificationsService {
     errorMessage: string | null;
     providerMessageId: string | null;
   }): Promise<void> {
-    const repo = await this.twentyORMGlobalManager.getRepository<DharmaNotificationRecord>(
-      workspaceId,
-      'dharmaNotification',
-      { shouldBypassPermissionChecks: true },
-    );
+    const repo =
+      await this.twentyORMGlobalManager.getRepository<DharmaNotificationRecord>(
+        workspaceId,
+        'dharmaNotification',
+        { shouldBypassPermissionChecks: true },
+      );
 
     await repo.update(
       { id: notificationId },

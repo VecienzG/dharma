@@ -20,7 +20,12 @@ export const DHARMA_NOTIFICATION_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Kind',
     icon: 'IconCategory',
     options: [
-      { label: 'AI Suggestion', value: 'AI_SUGGESTION', position: 0, color: 'yellow' },
+      {
+        label: 'AI Suggestion',
+        value: 'AI_SUGGESTION',
+        position: 0,
+        color: 'yellow',
+      },
       { label: 'Task Due', value: 'TASK_DUE', position: 1, color: 'red' },
       { label: 'Payment', value: 'PAYMENT', position: 2, color: 'green' },
       { label: 'Followup', value: 'FOLLOWUP', position: 3, color: 'orange' },

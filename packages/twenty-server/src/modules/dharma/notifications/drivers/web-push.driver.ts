@@ -28,7 +28,8 @@ export class WebPushDriver implements DharmaNotificationDriver {
     if (!this.isConfigured()) {
       return {
         status: 'SKIPPED',
-        errorMessage: 'VAPID keys not set (VAPID_PUBLIC_KEY/PRIVATE_KEY/SUBJECT)',
+        errorMessage:
+          'VAPID keys not set (VAPID_PUBLIC_KEY/PRIVATE_KEY/SUBJECT)',
       };
     }
 
