@@ -50,7 +50,7 @@ msgstr "L'area di lavoro sarà disattivata in {remainingDays} {dayOrDays} e tutt
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Se desideri continuare a utilizzare Twenty, aggiorna il tuo abbonamento entro i prossimi {remainingDays} {dayOrDays}."
+msgstr "Se desideri continuare a utilizzare Dharma, aggiorna il tuo abbonamento entro i prossimi {remainingDays} {dayOrDays}."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
@@ -76,7 +76,7 @@ msgstr "Email di prova"
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "Join your team on Twenty"
-msgstr "Unisciti al tuo team su Twenty"
+msgstr "Unisciti al tuo team su Dharma"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -126,7 +126,7 @@ msgstr "Se non hai avviato questa modifica, contatta immediatamente il proprieta
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
-msgstr "Accedi a Twenty"
+msgstr "Accedi a Dharma"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -171,7 +171,7 @@ msgstr "Tutti i dati in questo spazio di lavoro sono stati eliminati definitivam
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Se desideri utilizzare nuovamente Twenty, puoi creare un nuovo spazio di lavoro."
+msgstr "Se desideri utilizzare nuovamente Dharma, puoi creare un nuovo studio."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -181,7 +181,7 @@ msgstr "Crea un nuovo spazio di lavoro"
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
-msgstr "Che cos'è Twenty?"
+msgstr "Che cos'è Dharma?"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -196,7 +196,7 @@ msgstr "Sito web"
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Visit Twenty's website"
-msgstr "Visita il sito web di Twenty"
+msgstr "Visita il sito web di Dharma"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -206,7 +206,7 @@ msgstr "Github"
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Visit Twenty's GitHub repository"
-msgstr "Visita il repository GitHub di Twenty"
+msgstr "Visita il repository GitHub di Dharma"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -216,7 +216,7 @@ msgstr "Guida utente"
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Read Twenty's user guide"
-msgstr "Leggi la guida utente di Twenty"
+msgstr "Leggi la guida utente di Dharma"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -226,14 +226,14 @@ msgstr "Sviluppatori"
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Visit Twenty's developer documentation"
-msgstr "Visita la documentazione per sviluppatori di Twenty"
+msgstr "Visita la documentazione per sviluppatori di Dharma"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
-msgstr "Twenty.com, Società di Pubblica Utilità"
+msgstr "Beautiful Life Creative Studio — P.IVA 10544051211"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "San Francisco / Paris"
-msgstr "San Francisco / Parigi"
+msgstr "Italia"

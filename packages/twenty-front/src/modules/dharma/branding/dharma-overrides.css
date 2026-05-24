@@ -1,0 +1,42 @@
+/* Dharma brand palette overrides.
+   Loaded AFTER twenty-ui theme-light.css / theme-dark.css to win cascade.
+   We override only the surfaces and brand-blue scale; semantic structure of
+   Twenty tokens is preserved. */
+
+.light {
+  /* Brand primary — indaco profondo (sostituisce blue9/blue scale principale) */
+  --t-color-blue: #3b3b98;
+  --t-color-blue9: #3b3b98;
+  --t-color-blue10: #2e2e7a;
+  --t-color-blue11: #28286b;
+
+  /* Border/accent variants nei tag e bottoni */
+  --t-border-color-blue: #b3b3e0;
+  --t-tag-text-blue: #2e2e7a;
+  --t-tag-background-blue: #ecebf6;
+  --t-accent-primary: #d6d6ec;
+  --t-accent-accent3570: #6b6bbf;
+  --t-accent-accent4060: #6b6bbf;
+
+  /* Background warm off-white — solo "page" tertiary visibile dietro al modal auth */
+  --theme-light-background-tertiary: #faf8f5;
+  --t-background-tertiary: #faf8f5;
+}
+
+.dark {
+  /* Brand primary — indaco più luminoso per contrasto su dark */
+  --t-color-blue: #7a7ad6;
+  --t-color-blue9: #7a7ad6;
+  --t-color-blue10: #8e8ee0;
+  --t-color-blue11: #a3a3e8;
+
+  --t-border-color-blue: #4d4d99;
+  --t-tag-text-blue: #b3b3e0;
+  --t-tag-background-blue: #1e1e2e;
+  --t-accent-primary: #3b3b6b;
+  --t-accent-accent3570: #7a7ad6;
+  --t-accent-accent4060: #7a7ad6;
+
+  --theme-dark-background-tertiary: #0f0f12;
+  --t-background-tertiary: #0f0f12;
+}

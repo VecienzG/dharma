@@ -5,6 +5,8 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
+// Dharma brand palette — loaded after theme-*.css to win cascade
+import '@/dharma/branding/dharma-overrides.css';
 import './index.css';
 
 const root = ReactDOM.createRoot(
