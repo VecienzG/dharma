@@ -171,6 +171,11 @@ packages/
 - Never delete or rewrite committed instance command `up`/`down` logic
 - See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation
 
+### Dharma Workspace Bootstrap
+- After activating a new workspace, operators **must** run `dharma:seed:schema -w <workspaceId>` once to provision Dharma custom objects/fields/relations.
+- The command is idempotent — safe to re-run after upgrades.
+- See `packages/twenty-server/docs/DHARMA_WORKSPACE_BOOTSTRAP.md` for full instructions.
+
 ### Utility Helpers
 Use existing helpers from `twenty-shared` instead of manual type guards:
 - `isDefined()`, `isNonEmptyString()`, `isNonEmptyArray()`
