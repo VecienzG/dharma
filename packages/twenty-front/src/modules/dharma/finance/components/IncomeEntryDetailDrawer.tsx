@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { gql } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { IconX } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { UPDATE_DHARMA_INCOME_ENTRY } from '@/dharma/finance/graphql/mutations/updateDharmaIncomeEntry';
 import {
   type DharmaIncomeEntryRecord,
   type DharmaSplitConfig,
@@ -22,30 +22,6 @@ type IncomeEntryDetailDrawerProps = {
   onClose: () => void;
   onSaved?: () => void;
 };
-
-const UPDATE_INCOME_ENTRY_MUTATION = gql`
-  mutation UpdateDharmaIncomeEntrySplit(
-    $id: UUID!
-    $input: DharmaIncomeEntryUpdateInput!
-  ) {
-    updateDharmaIncomeEntry(id: $id, data: $input) {
-      id
-      splitConfig
-      taxAmount {
-        amountMicros
-        currencyCode
-      }
-      beautifulLifeAmount {
-        amountMicros
-        currencyCode
-      }
-      personalAmount {
-        amountMicros
-        currencyCode
-      }
-    }
-  }
-`;
 
 const DEFAULT_INVOICED_SPLIT: DharmaSplitConfig = {
   taxPercent: 35,
@@ -243,7 +219,7 @@ export const IncomeEntryDetailDrawer = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [updateEntry, { loading: saving }] = useMutation(
-    UPDATE_INCOME_ENTRY_MUTATION,
+    UPDATE_DHARMA_INCOME_ENTRY,
     { client: apolloCoreClient },
   );
 

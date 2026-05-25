@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { gql } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { IconCheck, IconUser } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { UPDATE_DHARMA_COLLABORATOR_PAYOUT } from '@/dharma/finance/graphql/mutations/updateDharmaCollaboratorPayout';
 import {
   formatCurrencyFromMicros,
   formatItalianDate,
@@ -23,6 +23,10 @@ type CollaboratorPayoutRecord = {
   paidAt: string | null;
   notes: string | null;
   name?: string | null;
+  collaborator: {
+    id: string;
+    name: { firstName: string | null; lastName: string | null } | null;
+  } | null;
   [key: string]: unknown;
 };
 
@@ -33,24 +37,24 @@ const PAYOUT_GQL_FIELDS = {
   status: true,
   paidAt: true,
   feeAmount: { amountMicros: true, currencyCode: true },
+  collaborator: {
+    id: true,
+    name: { firstName: true, lastName: true },
+  },
 };
 
-// Built dynamically so we can swap the operation name without
-// re-running graphql-codegen. The mutation is a thin wrapper around
-// the standard Twenty `updateDharmaCollaboratorPayout` resolver
-// that is auto-exposed by the metadata layer.
-const UPDATE_PAYOUT_MUTATION = gql`
-  mutation MarkDharmaCollaboratorPayoutPaid(
-    $id: UUID!
-    $input: DharmaCollaboratorPayoutUpdateInput!
-  ) {
-    updateDharmaCollaboratorPayout(id: $id, data: $input) {
-      id
-      status
-      paidAt
-    }
+const formatCollaboratorName = (
+  collaborator: CollaboratorPayoutRecord['collaborator'],
+): string | null => {
+  if (!collaborator || !collaborator.name) {
+    return null;
   }
-`;
+  const parts = [collaborator.name.firstName, collaborator.name.lastName]
+    .filter(
+      (part): part is string => typeof part === 'string' && part.length > 0,
+    );
+  return parts.length > 0 ? parts.join(' ') : null;
+};
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -184,7 +188,7 @@ export const CollaboratorPayoutWidget = () => {
       recordGqlFields: PAYOUT_GQL_FIELDS,
     });
 
-  const [markPaid] = useMutation(UPDATE_PAYOUT_MUTATION, {
+  const [markPaid] = useMutation(UPDATE_DHARMA_COLLABORATOR_PAYOUT, {
     client: apolloCoreClient,
   });
 
@@ -254,7 +258,10 @@ export const CollaboratorPayoutWidget = () => {
               </StyledAvatar>
               <StyledLabel>
                 <StyledName>
-                  {payout.name ?? payout.notes ?? 'Collaboratore'}
+                  {formatCollaboratorName(payout.collaborator) ??
+                    payout.name ??
+                    payout.notes ??
+                    'Collaboratore'}
                 </StyledName>
                 {payout.paidAt !== null && (
                   <StyledMeta>
