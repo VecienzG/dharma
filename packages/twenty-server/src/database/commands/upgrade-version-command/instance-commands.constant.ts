@@ -34,6 +34,7 @@ import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
 import { CreateSigningKeyTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778550000000-create-signing-key-table';
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
+import { AddDharmaExpenseDueAtFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1779700000000-add-dharma-expense-due-at';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -70,4 +71,5 @@ export const INSTANCE_COMMANDS = [
   AddIsInternalMessagesImportEnabledFastInstanceCommand,
   CreateSigningKeyTableFastInstanceCommand,
   EncryptConnectedAccountTokensSlowInstanceCommand,
+  AddDharmaExpenseDueAtFastInstanceCommand,
 ];

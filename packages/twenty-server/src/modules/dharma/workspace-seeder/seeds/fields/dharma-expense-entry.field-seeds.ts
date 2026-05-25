@@ -41,6 +41,13 @@ export const DHARMA_EXPENSE_ENTRY_FIELD_SEEDS: FieldMetadataSeed[] = [
     icon: 'IconCalendarCheck',
   },
   {
+    type: FieldMetadataType.DATE_TIME,
+    name: 'dueAt',
+    label: 'Due At',
+    icon: 'IconCalendarDue',
+    isNullable: true,
+  },
+  {
     type: FieldMetadataType.TEXT,
     name: 'receiptUrl',
     label: 'Receipt',
