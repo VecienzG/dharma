@@ -38,6 +38,10 @@ export enum AppPath {
 
   Authorize = '/authorize',
 
+  // Dharma — legal/static pages
+  DharmaLegalTerms = '/legal/terms',
+  DharmaLegalPrivacy = '/legal/privacy',
+
   // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',

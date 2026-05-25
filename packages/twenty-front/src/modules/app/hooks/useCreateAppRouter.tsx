@@ -130,6 +130,18 @@ const DharmaAiMemoryPage = lazy(() =>
   })),
 );
 
+const DharmaLegalTermsPage = lazy(() =>
+  import('~/pages/dharma/DharmaLegalTermsPage').then((module) => ({
+    default: module.DharmaLegalTermsPage,
+  })),
+);
+
+const DharmaLegalPrivacyPage = lazy(() =>
+  import('~/pages/dharma/DharmaLegalPrivacyPage').then((module) => ({
+    default: module.DharmaLegalPrivacyPage,
+  })),
+);
+
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
@@ -314,6 +326,22 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <Authorize />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.DharmaLegalTerms}
+            element={
+              <LazyRoute>
+                <DharmaLegalTermsPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.DharmaLegalPrivacy}
+            element={
+              <LazyRoute>
+                <DharmaLegalPrivacyPage />
               </LazyRoute>
             }
           />

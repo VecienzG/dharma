@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { Link } from 'react-router-dom';
 
 import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
+import { AppPath } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCopyContainer = styled.div`
@@ -64,21 +66,13 @@ export const FooterNote = () => {
     return (
       <StyledCopyContainer>
         <Trans>By using Twenty, you agree to the</Trans>{' '}
-        <a
-          href="https://dharma.beautifullife.studio/legal/terms"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Link to={AppPath.DharmaLegalTerms}>
           <Trans>Terms of Service</Trans>
-        </a>{' '}
+        </Link>{' '}
         <Trans>and</Trans>{' '}
-        <a
-          href="https://dharma.beautifullife.studio/legal/privacy"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Link to={AppPath.DharmaLegalPrivacy}>
           <Trans>Privacy Policy</Trans>
-        </a>
+        </Link>
         .
       </StyledCopyContainer>
     );
@@ -94,21 +88,13 @@ export const FooterNote = () => {
           <StyledSeparator>•</StyledSeparator>
         </>
       )}
-      <a
-        href="https://dharma.beautifullife.studio/legal/privacy"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <Link to={AppPath.DharmaLegalPrivacy}>
         <Trans>Privacy Policy</Trans>
-      </a>
+      </Link>
       <StyledSeparator>•</StyledSeparator>
-      <a
-        href="https://dharma.beautifullife.studio/legal/terms"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <Link to={AppPath.DharmaLegalTerms}>
         <Trans>Terms of Service</Trans>
-      </a>
+      </Link>
     </StyledLinksContainer>
   );
 };
