@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DharmaNotificationSchedulerCronCommand } from 'src/modules/dharma/notifications/commands/dharma-notification-scheduler.cron.command';
 import { DharmaNotificationsController } from 'src/modules/dharma/notifications/controllers/dharma-notifications.controller';
 import { DharmaNotificationSchedulerCronJob } from 'src/modules/dharma/notifications/crons/dharma-notification-scheduler.cron.job';
@@ -18,6 +20,8 @@ import { DharmaNotificationsService } from 'src/modules/dharma/notifications/ser
 @Module({
   imports: [
     GlobalWorkspaceDataSourceModule,
+    AuthModule,
+    WorkspaceCacheStorageModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
   ],
   controllers: [DharmaNotificationsController],
